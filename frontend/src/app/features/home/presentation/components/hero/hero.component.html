@@ -1,0 +1,98 @@
+<section class="w-full bg-[#FFF2E6] py-12 md:py-20 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+
+    <div class="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left">
+
+      <div
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-[#E28597] mb-6 shadow-sm">
+        <mat-icon style="color: #E28597; font-size: 16px; width: 15px; height: 16px;"
+          class=" flex items-center justify-center leading-none">auto_awesome</mat-icon>
+        <!-- [BACK-END]: Substituir por dado dinâmico do ano/texto da confeitaria se necessário -->
+        <span class="text-xs font-normal text-[#E28597] tracking-wide leading-none">Confeitaria artesanal desde
+          2014</span>
+      </div>
+
+      <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-[#3E2A22] leading-[1.15] mb-6">
+        Bolos que <br class="hidden sm:inline">
+        transformam <br>
+        <span class="text-[#E28597] font-normal italic">datas em memórias</span>
+      </h1>
+
+      <p class="text-sm sm:text-base text-[#735E54] max-w-lg mb-8 leading-relaxed">
+        Massas artesanais, recheios autorais e decoração sob medida. Escolha do cardápio ou monte o seu bolo do zero —
+        com entrega em 90 min ou retirada na loja.
+      </p>
+
+      <div
+        class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4 w-full sm:w-auto mb-10 lg:mb-12">
+        <a routerLink="/cardapio"
+          class="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#E28597] text-white font-medium text-sm hover:bg-[#d07587] transition-all shadow-sm">
+          Ver cardápio
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+        <a routerLink="/personalizar"
+          class="flex items-center justify-center px-6 py-3.5 rounded-full bg-transparent border border-[#3E2A22]/20 text-[#3E2A22] font-medium text-sm hover:bg-white/40 transition-all">
+          Personalizar meu bolo
+        </a>
+      </div>
+
+      <div
+        class="grid grid-cols-3 gap-4 sm:gap-6 pt-6 border-t border-[#E6DDD3] w-full max-w-md text-center lg:text-left">
+        <div>
+          <!-- [BACK-END]: Conectar com variável de avaliação média (ex: {{ stats.averageRating }}) -->
+          <div class="font-serif text-xl sm:text-2xl font-bold text-[#3E2A22]">4.9</div>
+          <div class="text-[11px] sm:text-xs text-[#8C7A70] mt-0.5">Avaliação média</div>
+        </div>
+        <div>
+          <!-- [BACK-END]: Conectar com variável de anos de mercado (ex: {{ stats.yearsInBusiness }}) -->
+          <div class="font-serif text-xl sm:text-2xl font-bold text-[#3E2A22]">12 anos</div>
+          <div class="text-[11px] sm:text-xs text-[#8C7A70] mt-0.5">De confeitaria</div>
+        </div>
+        <div>
+          <!-- [BACK-END]: Conectar com variável de total de pedidos (ex: {{ stats.totalOrders }}) -->
+          <div class="font-serif text-xl sm:text-2xl font-bold text-[#3E2A22]">2.4k+</div>
+          <div class="text-[11px] sm:text-xs text-[#8C7A70] mt-0.5">Pedidos entregues</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="lg:col-span-6 relative flex justify-center pb-12 sm:pb-8 lg:pb-0">
+
+      <div class="relative w-full max-w-md sm:max-w-lg rounded-3xl overflow-visible shadow-2xl bg-[#F2ECE4]">
+
+        <div class="w-full h-90 sm:h-110 lg:h-120 rounded-3xl overflow-hidden">
+          <!-- [BACK-END]: Conectar src da imagem com o produto em destaque (ex: [src]="featuredCake.imageUrl") -->
+          <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
+            alt="Bolo Rosé Framboesa" class="w-full h-full object-cover" />
+        </div>
+
+        <div
+          class="absolute -bottom-6 left-4 sm:left-6 bg-white px-4 py-3.5 rounded-2xl shadow-xl border border-black/5 w-57.5 sm:w-62.5 z-10">
+          <span class="text-[10px] text-[#8C7A70] font-normal block mb-0.5">Mais pedido da semana</span>
+
+          <!-- [BACK-END]: Conectar com o nome do bolo (ex: {{ featuredCake.name }}) -->
+          <h3 class="font-serif font-bold text-[#3E2A22] text-sm mb-2">Bolo Rosé Framboesa</h3>
+
+          <div class="flex items-center justify-between">
+            <!-- [BACK-END]: Conectar com o preço formatado (ex: {{ featuredCake.price | currency:'BRL' }}) -->
+            <span class="font-bold text-[#E28597] text-sm">R$ 189,90</span>
+
+            <div class="flex items-center gap-1 text-[11px] text-[#735E54]">
+              <div class="flex text-amber-400 gap-0.5 text-xs">
+                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+              </div>
+              <!-- [BACK-END]: Conectar com a nota do produto (ex: {{ featuredCake.rating }}) -->
+              <span class="font-medium text-[#3E2A22] ml-0.5">4.9</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
