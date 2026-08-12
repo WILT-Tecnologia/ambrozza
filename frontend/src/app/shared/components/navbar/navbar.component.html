@@ -1,0 +1,58 @@
+<header class="w-full bg-[#FAF6F0] border-b border-[#F0E6DD] sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 lg:px-6 py-2 flex items-center justify-between">
+
+
+    <div class="flex items-center gap-3">
+
+      <button mat-icon-button (click)="toggleMenu()" class="lg:hidden! flex text-[#4A3830]" aria-label="Abrir menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+
+      <div class="flex items-center gap-3">
+        <div
+          class="w-9 h-9 rounded-full bg-[#D4768B] flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0">
+          L
+        </div>
+        <span class="font-serif text-lg lg:text-xl font-bold text-[#3E2A22] tracking-tight">
+          Ki Delecia Bolos
+        </span>
+      </div>
+    </div>
+
+
+    <div class="hidden lg:flex items-center gap-8 flex-1 justify-center">
+      <nav class="flex items-center gap-8">
+        @for (link of mainLinks; track link.route) {
+        <a [routerLink]="link.route" [routerLinkActiveOptions]="{ exact: link.route === '/' }"
+          routerLinkActive="text-[#D4768B] font-semibold"
+          class="text-sm text-[#4A3830] hover:text-[#D4768B] transition-colors">
+          {{ link.label }}
+        </a>
+        }
+      </nav>
+
+
+      <div class="relative w-60">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-[#8C7A70]">
+          <mat-icon class="w-5 h-5 text-sm">search</mat-icon>
+        </span>
+        <input type="text" placeholder="Buscar bolos..."
+          class="w-full pl-9 pr-4 py-1.5 bg-[#F2ECE4] text-[#4A3830] text-sm rounded-full focus:outline-none focus:ring-1 focus:ring-[#D4768B]">
+      </div>
+    </div>
+
+
+    <div class="flex items-center gap-1">
+      <button mat-icon-button class="text-[#4A3830] hover:text-[#D4768B] lg:hidden">
+        <mat-icon>search</mat-icon>
+      </button>
+      <button mat-icon-button class="text-[#4A3830] hover:text-[#D4768B]">
+        <mat-icon>shopping_bag_outlined</mat-icon>
+      </button>
+      <button mat-icon-button class="text-[#4A3830] hover:text-[#D4768B]">
+        <mat-icon>person_outline</mat-icon>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,3 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #fff2e6;
+}
+
+.example-container {
+  height: 100vh;
+  width: 100vw;
+}
+
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
