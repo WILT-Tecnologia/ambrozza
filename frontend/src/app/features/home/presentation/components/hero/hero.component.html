@@ -59,18 +59,19 @@
 
     </div>
 
-    <div class="lg:col-span-6 relative flex justify-center pb-12 sm:pb-8 lg:pb-0">
+    <div class="lg:col-span-6 relative flex justify-center pb-12 sm:pb-8 lg:pb-0 w-full">
 
-      <div class="relative w-full max-w-md sm:max-w-lg rounded-3xl overflow-visible shadow-2xl bg-[#F2ECE4]">
+      <div class="relative w-full sm:w-[90%] lg:max-w-lg rounded-3xl overflow-visible shadow-2xl bg-[#F2ECE4] mx-auto">
 
-        <div class="w-full h-90 sm:h-110 lg:h-120 rounded-3xl overflow-hidden">
+
+        <div class="w-full aspect-4/5 sm:aspect-4/3 lg:aspect-square rounded-3xl overflow-hidden">
           <!-- [BACK-END]: Conectar src da imagem com o produto em destaque (ex: [src]="featuredCake.imageUrl") -->
           <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
             alt="Bolo Rosé Framboesa" class="w-full h-full object-cover" />
         </div>
 
         <div
-          class="absolute -bottom-6 left-4 sm:left-6 bg-white px-4 py-3.5 rounded-2xl shadow-xl border border-black/5 w-57.5 sm:w-62.5 z-10">
+          class="absolute -bottom-6 left-4 right-4 sm:left-6 sm:right-auto bg-white px-4 py-3.5 rounded-2xl shadow-xl border border-black/5 sm:w-62.5 z-10">
           <span class="text-[10px] text-[#8C7A70] font-normal block mb-0.5">Mais pedido da semana</span>
 
           <!-- [BACK-END]: Conectar com o nome do bolo (ex: {{ featuredCake.name }}) -->
