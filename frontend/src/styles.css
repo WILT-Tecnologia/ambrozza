@@ -7,7 +7,7 @@ body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  background-color: #fff2e6;
+  background-color: #fef9f5;
 }
 
 .example-container {
@@ -15,7 +15,9 @@ body {
   width: 100vw;
 }
 
+mat-sidenav-container,
 mat-sidenav-content {
+  background-color: #fef9f5 !important;
   display: flex;
   flex-direction: column;
   height: 100%;
