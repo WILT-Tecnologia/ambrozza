@@ -1,0 +1,76 @@
+<section class="w-full bg-transparent pt-2 pb-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+    <span class="text-xs uppercase tracking-widest text-[#8C7A70] font-semibold block mb-1">
+      Favoritos dos Clientes
+    </span>
+    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#3E2A22]">Mais vendidos</h2>
+  </div>
+
+  <!-- Adicionado py-6 para dar folga vertical para o hover crescer sem cortar -->
+  <div class="relative w-full overflow-hidden mask-fade py-6 my-[-24px]">
+    <div class="flex gap-6 animate-marquee w-max hover:[animation-play-state:paused] px-4">
+
+      <!-- Duplicamos o array para o loop contínuo infinito -->
+      <ng-container *ngFor="let item of [1, 2]">
+        <div *ngFor="let produto of produtos"
+          class="w-[300px] sm:w-[340px] bg-white rounded-3xl overflow-hidden border border-[#E6DDD3] flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-[#E28597] hover:shadow-md relative z-10 group">
+
+          <div>
+            <div class="relative w-full h-56 bg-[#F2ECE4]">
+              <div class="w-full h-full overflow-hidden">
+                <img [src]="produto.imagem" [alt]="produto.nome"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+
+              <div class="absolute top-3 left-3 flex flex-col items-start gap-1.5 z-20 pointer-events-none">
+                <span class="bg-white text-[#3E2A22] text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm">
+                  {{ produto.categoria }}
+                </span>
+
+                <span *ngIf="produto.destaque"
+                  class="bg-[#E28597] text-white text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+                  <span class="text-[10px]">✦</span> Destaque
+                </span>
+              </div>
+            </div>
+
+            <div class="p-4 pb-2">
+              <h3 class="font-serif font-bold text-[#3E2A22] text-lg mb-1.5 leading-snug">{{ produto.nome }}</h3>
+              <p class="text-xs text-[#735E54] line-clamp-2 mb-4 leading-relaxed">
+                {{ produto.descricao }}
+              </p>
+            </div>
+          </div>
+
+          <div class="p-4 pt-0 mt-auto">
+            <div class="flex items-center justify-between mb-3 text-xs gap-1">
+              <div class="flex items-center gap-1">
+                <div class="flex text-amber-400 text-sm sm:text-base gap-0.5">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <span class="font-bold text-[#3E2A22] text-xs sm:text-sm ml-0.5">{{ produto.nota }}</span>
+                <span class="text-[#8C7A70] text-[10px] sm:text-xs">({{ produto.reviews }})</span>
+              </div>
+              <span class="text-emerald-600 font-medium whitespace-nowrap">{{ produto.unidadesVendidas }} un.</span>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-[#F2ECE4] gap-2">
+              <span class="font-serif font-bold text-[#E28597] text-lg sm:text-xl truncate">
+                R$ {{ produto.preco.toFixed(2).replace('.', ',') }}
+              </span>
+              <button
+                class="bg-[#E28597] cursor-pointer hover:bg-[#d07587] text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-full transition-all flex items-center gap-1 shadow-sm active:scale-95 shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Pedir
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</section>

@@ -1,7 +1,6 @@
 <section class="w-full bg-transparent pt-2 pb-16 px-4 sm:px-6 lg:px-8">
   <div class="max-w-7xl mx-auto">
 
-
     <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-1 gap-4">
       <div>
         <span class="text-xs uppercase tracking-widest text-[#8C7A70] font-semibold block mb-1">Seleção da casa</span>
@@ -17,9 +16,7 @@
       </a>
     </div>
 
-
     <div class="relative px-0 lg:px-12">
-
 
       <button (click)="prevSlide(swiperRef)"
         class="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white border border-[#E6DDD3] text-[#3E2A22] items-center justify-center shadow-sm hover:bg-[#FFF2E6] hover:border-[#E28597] transition-all">
@@ -28,27 +25,26 @@
         </svg>
       </button>
 
-
-      <swiper-container #swiperRef slides-per-view="1" space-between="24" pagination="false" navigation="false"
+      <swiper-container #swiperRef slides-per-view="1.15" space-between="16" pagination="false" navigation="false"
         breakpoints='{
-          "640": { "slidesPerView": 2 },
-          "1024": { "slidesPerView": 4 }
-        }' class="pt-2 pb-6">
+        "540": { "slidesPerView": 2, "spaceBetween": 20 },
+        "768": { "slidesPerView": 3, "spaceBetween": 24 },
+        "1150": { "slidesPerView": 4, "spaceBetween": 24 }
+      }' class="pt-2 pb-6">
 
         @for (produto of produtos; track produto.id) {
         <swiper-slide class="h-auto flex py-3 px-1">
 
+
           <div
-            class="w-full bg-white rounded-3xl overflow-hidden border border-[#E6DDD3] flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-[#E28597] hover:shadow-md relative z-10 group">
+            class="w-full h-full bg-white rounded-3xl overflow-hidden border border-[#E6DDD3] flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-[#E28597] hover:shadow-md relative z-10 group">
+
             <div>
-
               <div class="relative w-full h-56 bg-[#F2ECE4]">
-
                 <div class="w-full h-full overflow-hidden">
                   <img [src]="produto.imagem" [alt]="produto.nome"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
-
 
                 <div
                   class="absolute top-3 left-3 flex flex-col items-start gap-1.5 z-20 pointer-events-none transition-transform duration-300 ease-out group-hover:scale-[0.98]">
@@ -63,7 +59,6 @@
                 </div>
               </div>
 
-
               <div class="p-4 pb-2">
                 <h3 class="font-serif font-bold text-[#3E2A22] text-lg mb-1.5 leading-snug">{{ produto.nome }}</h3>
                 <p class="text-xs text-[#735E54] line-clamp-2 mb-4 leading-relaxed">
@@ -73,36 +68,39 @@
             </div>
 
 
-            <div class="p-4 pt-0">
+            <div class="p-4 pt-0 mt-auto">
 
-              <div class="flex items-center justify-between mb-4 text-xs">
-                <div class="flex items-center gap-1.5">
-                  <div class="flex text-amber-400 text-base gap-0.5">
+
+              <div class="flex items-center justify-between mb-3 text-xs gap-1">
+                <div class="flex items-center gap-1">
+                  <div class="flex text-amber-400 text-sm sm:text-base gap-0.5">
                     <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                   </div>
-                  <span class="font-bold text-[#3E2A22] text-sm ml-0.5">{{ produto.avaliacao }}</span>
-                  <span class="text-[#8C7A70] text-xs">({{ produto.totalAvaliacoes }})</span>
+                  <span class="font-bold text-[#3E2A22] text-xs sm:text-sm ml-0.5">{{ produto.avaliacao }}</span>
+                  <span class="text-[#8C7A70] text-[10px] sm:text-xs">({{ produto.totalAvaliacoes }})</span>
                 </div>
-                <span class="text-emerald-600 font-medium">{{ produto.unidadesDisponiveis }} un.</span>
+                <span class="text-emerald-600 font-medium whitespace-nowrap">{{ produto.unidadesDisponiveis }}
+                  un.</span>
               </div>
 
 
-              <div class="flex items-center justify-between pt-3 border-t border-[#F2ECE4]">
-                <span class="font-serif font-bold text-[#E28597] text-xl">{{ produto.preco | currency:'BRL' }}</span>
+              <div class="flex items-center justify-between pt-3 border-t border-[#F2ECE4] gap-2">
+                <span class="font-serif font-bold text-[#E28597] text-lg sm:text-xl truncate">{{ produto.preco |
+                  currency:'BRL' }}</span>
                 <button
-                  class="bg-[#E28597] hover:bg-[#d07587] text-white text-xs font-semibold px-4 py-2 rounded-full transition-all flex items-center gap-1 shadow-sm active:scale-95">
+                  class="bg-[#E28597] cursor-pointer hover:bg-[#d07587] text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-full transition-all flex items-center gap-1 shadow-sm active:scale-95 shrink-0">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                   </svg>
                   Pedir
                 </button>
               </div>
+
             </div>
           </div>
         </swiper-slide>
         }
       </swiper-container>
-
 
       <button (click)="nextSlide(swiperRef)"
         class="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white border border-[#E6DDD3] text-[#3E2A22] items-center justify-center shadow-sm hover:bg-[#FFF2E6] hover:border-[#E28597] transition-all">
