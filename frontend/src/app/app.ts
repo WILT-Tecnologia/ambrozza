@@ -4,11 +4,19 @@ import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { FooterComponent } from './shared/components/footer/footer.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, MatSidenavModule, NavbarComponent, RouterLink],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    MatSidenavModule,
+    NavbarComponent,
+    RouterLink,
+    FooterComponent,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

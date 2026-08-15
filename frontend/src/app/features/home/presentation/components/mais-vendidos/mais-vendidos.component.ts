@@ -11,6 +11,7 @@ import { Component } from '@angular/core';
 export class MaisVendidosComponent {
   produtos = [
     {
+      id: 1,
       nome: 'Mini Doces Sortidos (12un)',
       categoria: 'Outros',
       destaque: true,
@@ -23,6 +24,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 2,
       nome: 'Bolo Rosé Framboesa',
       categoria: 'Aniversário',
       destaque: true,
@@ -36,6 +38,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 3,
       nome: 'Trufado Belga Intenso',
       categoria: 'Chocolate',
       destaque: true,
@@ -49,6 +52,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 4,
       nome: 'Bolo Red Velvet Clássico',
       categoria: 'Especiais',
       destaque: true,
@@ -61,6 +65,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 5,
       nome: 'Cheesecake de Frutas Vermelhas',
       categoria: 'Tortas',
       destaque: false,
@@ -74,6 +79,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 6,
       nome: 'Bolo Ninho com Morango',
       categoria: 'Aniversário',
       destaque: true,
@@ -87,6 +93,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 7,
       nome: 'Torta Holandesa Cremosa',
       categoria: 'Tortas',
       destaque: false,
@@ -100,6 +107,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 8,
       nome: 'Cupcake de Baunilha com Recheio de Doce de Leite',
       categoria: 'Outros',
       destaque: false,
@@ -113,6 +121,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 9,
       nome: 'Bolo de Cenoura com Calda de Chocolate',
       categoria: 'Caseiros',
       destaque: false,
@@ -126,6 +135,7 @@ export class MaisVendidosComponent {
         'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=600&q=80',
     },
     {
+      id: 10,
       nome: 'Pavlova de Frutas Tropicais',
       categoria: 'Especiais',
       destaque: true,

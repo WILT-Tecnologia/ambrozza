@@ -8,7 +8,7 @@
 }
 
 .animate-marquee {
-  animation: marquee 120s linear infinite;
+  animation: marquee 320s linear infinite;
 }
 .mask-fade {
   mask-image: linear-gradient(to right, transparent, black 3%, black 97%, transparent);

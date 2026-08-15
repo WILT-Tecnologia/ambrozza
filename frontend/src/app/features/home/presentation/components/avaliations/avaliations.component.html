@@ -1,0 +1,130 @@
+<section class="w-full bg-transparent pt-4 pb-20">
+  <div class="container-padrao">
+
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-[#8C7A70] font-semibold block mb-1">
+          Quem provou, aprovou
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#3E2A22]">Avaliações recentes</h2>
+      </div>
+
+      <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-[#E6DDD3] shadow-sm">
+        <div class="flex text-amber-400 text-sm gap-0.5">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <span class="text-xs font-bold text-[#3E2A22]">
+          {{ mediaGeral }}
+          <span class="text-[#8C7A70] font-normal">({{ totalEntregas }})</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+
+      @for (avaliacao of listaAvaliacoes; track avaliacao.id) {
+      <div (click)="abrirModal(avaliacao)"
+        class="bg-white rounded-3xl p-6 border border-[#E6DDD3] flex flex-col justify-between transition-all duration-300 hover:border-[#E28597] hover:shadow-md relative overflow-hidden group h-full cursor-pointer">
+
+        <div class="absolute top-4 right-6 text-6xl font-serif text-[#E28597]/10 pointer-events-none select-none">“
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex text-amber-400 text-sm gap-0.5">
+              @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+              <span>{{ estrela <= avaliacao.nota ? '★' : '☆' }}</span>
+                  }
+            </div>
+            <span class="text-[11px] text-[#8C7A70]">{{ avaliacao.data }}</span>
+          </div>
+
+          <p class="text-sm sm:text-base text-[#735E54] mb-6 leading-relaxed relative z-10 min-h-18">
+            "{{ avaliacao.comentario }}"
+          </p>
+        </div>
+
+        <div class="mt-auto">
+          <div class="border-t border-[#F2ECE4] pt-5 mb-5">
+            @if (avaliacao.fotoUrl) {
+            <div class="w-full h-44 rounded-2xl overflow-hidden bg-[#F2ECE4]">
+              <img [src]="avaliacao.fotoUrl" [alt]="'Foto da avaliação de ' + avaliacao.autor"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            } @else {
+            <div
+              class="w-full h-44 rounded-2xl bg-transparent border border-dashed border-[#E6DDD3]/60 flex items-center justify-center text-xs text-[#8C7A70]/60 italic">
+              Avaliação sem foto anexada
+            </div>
+            }
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-[#F2ECE4] gap-2">
+            <div class="truncate">
+              <h4 class="font-serif font-bold text-[#3E2A22] text-sm truncate">{{ avaliacao.autor }}</h4>
+              <span class="text-[11px] text-[#E28597] font-medium truncate block">{{ avaliacao.produtoRelacionado
+                }}</span>
+            </div>
+
+            @if (avaliacao.verificado) {
+            <span class="text-[10px] bg-[#FFF2E6] text-[#A66033] px-2.5 py-1 rounded-full font-medium shrink-0">
+              Verificado ✓
+            </span>
+            }
+          </div>
+        </div>
+
+      </div>
+      }
+
+    </div>
+  </div>
+
+  @if (avaliacaoSelecionada) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="fecharModal()">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-xl border border-[#E6DDD3]"
+      (click)="$event.stopPropagation()">
+
+      <button (click)="fecharModal()"
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-[#F2ECE4] text-[#3E2A22] flex items-center justify-center hover:bg-[#E28597] hover:text-white transition-all cursor-pointer">
+        ✕
+      </button>
+
+      <div class="flex items-center justify-between mb-4 pr-8">
+        <div class="flex text-amber-400 text-base gap-0.5">
+          @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+          <span>{{ estrela <= avaliacaoSelecionada.nota ? '★' : '☆' }}</span>
+              }
+        </div>
+        <span class="text-xs text-[#8C7A70]">{{ avaliacaoSelecionada.data }}</span>
+      </div>
+
+      <p class="text-base sm:text-lg text-[#3E2A22] font-serif mb-6 leading-relaxed">
+        "{{ avaliacaoSelecionada.comentario }}"
+      </p>
+
+      @if (avaliacaoSelecionada.fotoUrl) {
+      <div class="w-full h-64 sm:h-72 rounded-2xl overflow-hidden mb-6 bg-[#F2ECE4]">
+        <img [src]="avaliacaoSelecionada.fotoUrl" [alt]="avaliacaoSelecionada.autor"
+          class="w-full h-full object-cover" />
+      </div>
+      }
+
+      <div class="flex items-center justify-between pt-4 border-t border-[#F2ECE4]">
+        <div>
+          <h4 class="font-serif font-bold text-[#3E2A22] text-base">{{ avaliacaoSelecionada.autor }}</h4>
+          <span class="text-xs text-[#E28597] font-medium">{{ avaliacaoSelecionada.produtoRelacionado }}</span>
+        </div>
+
+        @if (avaliacaoSelecionada.verificado) {
+        <span class="text-xs bg-[#FFF2E6] text-[#A66033] px-3 py-1 rounded-full font-medium">
+          Verificado ✓
+        </span>
+        }
+      </div>
+
+    </div>
+  </div>
+  }
+</section>

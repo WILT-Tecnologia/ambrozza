@@ -23,3 +23,9 @@ mat-sidenav-content {
   height: 100%;
   width: 100%;
 }
+
+@layer components {
+  .container-padrao {
+    @apply max-w-345 mx-auto px-6 sm:px-8 lg:px-12;
+  }
+}
