@@ -1,4 +1,4 @@
-# Ambrozza
+# Ambrozzaa
 
 Monorepo com backend (NestJS + Prisma) e frontend (Angular), orquestrados via Docker Compose junto com um banco PostgreSQL.
 
@@ -80,11 +80,11 @@ Caso não queira instalar o `make`, todos os comandos do Makefile podem ser exec
 
    Variáveis disponíveis (usadas pelo serviço `postgres` no `docker-compose.yml`):
 
-   | Variável            | Padrão      | Descrição                  |
-   | ------------------- | ----------- | --------------------------- |
-   | `POSTGRES_USER`     | `ambrozza`  | Usuário do banco            |
-   | `POSTGRES_PASSWORD` | `ambrozza`  | Senha do banco              |
-   | `POSTGRES_DB`       | `ambrozza`  | Nome do banco               |
+   | Variável            | Padrão     | Descrição        |
+   | ------------------- | ---------- | ---------------- |
+   | `POSTGRES_USER`     | `ambrozza` | Usuário do banco |
+   | `POSTGRES_PASSWORD` | `ambrozza` | Senha do banco   |
+   | `POSTGRES_DB`       | `ambrozza` | Nome do banco    |
 
    Ajuste os valores se necessário — os padrões já funcionam para desenvolvimento local.
 
@@ -142,25 +142,25 @@ make clean-volumes
 
 O `Makefile` reúne atalhos para os comandos de Docker Compose e Prisma mais usados no dia a dia. Rode `make help` para ver a lista completa:
 
-| Comando | Descrição |
-| --- | --- |
-| `make up` | Sobe o ambiente (build + start em background) |
-| `make start` | Inicia os containers existentes sem rebuildar |
-| `make down` | Para e remove os containers |
-| `make stop` | Para os containers sem removê-los |
-| `make restart` | Reinicia o ambiente (down + up) |
-| `make build` | Builda as imagens sem subir os containers |
-| `make rebuild` | Rebuilda as imagens sem cache e sobe o ambiente |
-| `make logs` / `logs-backend` / `logs-frontend` / `logs-postgres` | Acompanha os logs |
-| `make ps` | Lista os containers do projeto |
-| `make backend-shell` / `frontend-shell` / `postgres-shell` | Abre um shell no container |
-| `make prisma-studio` | Abre o Prisma Studio |
-| `make prisma-generate` | Gera o Prisma Client |
-| `make prisma-push` | Sincroniza o schema com o banco (`db push`) |
-| `make prisma-migrate name=nome-da-migration` | Cria e aplica uma migration |
-| `make clean` | Para os containers e remove imagens do projeto |
-| `make clean-volumes` | Remove containers e volumes (banco, `node_modules`, Prisma gerado) |
-| `make reset` | Reset completo: remove volumes e sobe o ambiente do zero |
+| Comando                                                          | Descrição                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `make up`                                                        | Sobe o ambiente (build + start em background)                      |
+| `make start`                                                     | Inicia os containers existentes sem rebuildar                      |
+| `make down`                                                      | Para e remove os containers                                        |
+| `make stop`                                                      | Para os containers sem removê-los                                  |
+| `make restart`                                                   | Reinicia o ambiente (down + up)                                    |
+| `make build`                                                     | Builda as imagens sem subir os containers                          |
+| `make rebuild`                                                   | Rebuilda as imagens sem cache e sobe o ambiente                    |
+| `make logs` / `logs-backend` / `logs-frontend` / `logs-postgres` | Acompanha os logs                                                  |
+| `make ps`                                                        | Lista os containers do projeto                                     |
+| `make backend-shell` / `frontend-shell` / `postgres-shell`       | Abre um shell no container                                         |
+| `make prisma-studio`                                             | Abre o Prisma Studio                                               |
+| `make prisma-generate`                                           | Gera o Prisma Client                                               |
+| `make prisma-push`                                               | Sincroniza o schema com o banco (`db push`)                        |
+| `make prisma-migrate name=nome-da-migration`                     | Cria e aplica uma migration                                        |
+| `make clean`                                                     | Para os containers e remove imagens do projeto                     |
+| `make clean-volumes`                                             | Remove containers e volumes (banco, `node_modules`, Prisma gerado) |
+| `make reset`                                                     | Reset completo: remove volumes e sobe o ambiente do zero           |
 
 ## Desenvolvimento (hot reload)
 
