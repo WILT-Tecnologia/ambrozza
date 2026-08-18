@@ -1,15 +1,23 @@
+@if (produtos.length >= 3) {
 <section class="w-full bg-transparent pt-2 pb-16 px-4 sm:px-6 lg:px-8">
 
   <div class="container-padrao">
 
     <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-1 gap-4">
       <div>
-        <span class="text-xs uppercase tracking-widest text-[#8C7A70] font-semibold block mb-1">Seleção da casa</span>
-        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#3E2A22]">Produtos em destaque</h2>
+        <span class="text-xs uppercase tracking-widest text-(--text-muted) font-semibold block mb-1">
+          Seleção da casa
+        </span>
+
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-(--text-main)">
+          Produtos em destaque
+        </h2>
       </div>
+
       <a routerLink="/cardapio"
-        class="inline-flex items-center gap-1.5 text-sm font-semibold text-[#E28597] hover:text-[#d07587] transition-colors group">
+        class="inline-flex items-center gap-1.5 text-sm font-semibold text-(--primary) hover:text-(--primary-hover) transition-colors group">
         Ver todos
+
         <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
           viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
@@ -17,102 +25,159 @@
       </a>
     </div>
 
-    <div class="relative  lg:px-12 -mx-12 px-12">
 
+
+    <div class="relative" [class.lg:px-12]="produtos.length > 4" [class.lg:-mx-12]="produtos.length > 4">
+
+
+      @if (produtos.length > 4) {
       <button (click)="prevSlide(swiperRef)"
-        class="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white border border-[#E6DDD3] text-[#3E2A22] items-center justify-center shadow-sm hover:bg-[#FFF2E6] hover:border-[#E28597] transition-all">
+        class="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) text-(--text-main) items-center justify-center shadow-sm hover:bg-(--bg-badge) hover:border-(--primary) transition-all cursor-pointer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
+      }
 
-      <swiper-container #swiperRef slides-per-view="1" space-between="16" pagination="false" navigation="false"
-        init="true" slides-per-view="4" breakpoints='{
-       "320": { "slidesPerView": "auto", "spaceBetween": 14, "centeredSlides": false },
-       "540": { "slidesPerView": 2, "spaceBetween": 20 },
-       "768": { "slidesPerView": 3, "spaceBetween": 24 },
-       "1150": { "slidesPerView": 4, "spaceBetween": 24 }
-      }' class="pt-2 pb-6">
+
+      <swiper-container #swiperRef pagination="false" navigation="false" init="true" slides-per-view="auto"
+        space-between="16" centered-slides="false" class="pt-2 pb-6" [class.justify-center]="produtos.length === 3">
 
         @for (produto of produtos; track produto.id) {
-        <swiper-slide class="h-auto w-[82%] sm:w-auto flex py-3 px-1">
 
+        <swiper-slide class="h-auto flex py-3 px-1" [class.!w-[88%]]="produtos.length !== 3"
+          [class.sm:!w-[46%]]="produtos.length !== 3" [class.md:!w-[40%]]="produtos.length !== 3"
+          [class.lg:!w-[300px]]="produtos.length !== 3" [class.xl:!w-[310px]]="produtos.length !== 3"
+          [class.w-full]="produtos.length === 3" [class.sm:w-1/2]="produtos.length === 3"
+          [class.lg:w-1/3]="produtos.length === 3" [class.max-w-[420px]]="produtos.length === 3">
 
           <div
-            class="w-full h-full bg-white rounded-3xl overflow-hidden border border-[#E6DDD3] flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-[#E28597] hover:shadow-md relative z-10 group">
+            class="w-full h-full bg-(--bg-card) rounded-3xl overflow-hidden border border-(--border-color) flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-(--primary) hover:shadow-md relative z-10 group">
 
             <div>
-              <div class="relative w-full h-56 bg-[#F2ECE4]">
+
+
+              <div class="relative w-full h-56 bg-(--bg-surface)">
+
                 <div class="w-full h-full overflow-hidden">
                   <img [src]="produto.imagem" [alt]="produto.nome"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
 
+
                 <div
                   class="absolute top-3 left-3 flex flex-col items-start gap-1.5 z-20 pointer-events-none transition-transform duration-300 ease-out group-hover:scale-[0.98]">
-                  <span class="bg-white text-[#3E2A22] text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm">
+
+                  <span
+                    class="bg-(--bg-card) text-(--text-main) text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm">
                     {{ produto.categoria }}
                   </span>
 
                   <span
-                    class="bg-[#E28597] text-white text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
-                    <span class="text-[10px]">✦</span> Destaque
+                    class="bg-(--primary) text-(--text-on-primary) text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+                    <span class="text-[10px]">✦</span>
+                    Destaque
                   </span>
+
                 </div>
+
               </div>
 
+
+
               <div class="p-4 pb-2">
-                <h3 class="font-serif font-bold text-[#3E2A22] text-lg mb-1.5 leading-snug">{{ produto.nome }}</h3>
-                <p class="text-xs text-[#735E54] line-clamp-2 mb-4 leading-relaxed">
+
+                <h3 class="font-serif font-bold text-(--text-main) text-lg mb-1.5 leading-snug">
+                  {{ produto.nome }}
+                </h3>
+
+                <p class="text-xs text-(--text-muted) line-clamp-2 mb-4 leading-relaxed">
                   {{ produto.descricao }}
                 </p>
+
               </div>
+
             </div>
+
 
 
             <div class="p-4 pt-0 mt-auto">
 
 
               <div class="flex items-center justify-between mb-3 text-xs gap-1">
+
                 <div class="flex items-center gap-1">
-                  <div class="flex text-amber-400 text-sm sm:text-base gap-0.5">
-                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+
+                  <div class="flex text-(--star-color) text-sm sm:text-base gap-0.5">
+                    <span>★</span>
+                    <span>★</span>
+                    <span>★</span>
+                    <span>★</span>
+                    <span>★</span>
                   </div>
-                  <span class="font-bold text-[#3E2A22] text-xs sm:text-sm ml-0.5">{{ produto.avaliacao }}</span>
-                  <span class="text-[#8C7A70] text-[10px] sm:text-xs">({{ produto.totalAvaliacoes }})</span>
+
+                  <span class="font-bold text-(--text-main) text-xs sm:text-sm ml-0.5">
+                    {{ produto.avaliacao }}
+                  </span>
+
+                  <span class="text-(--text-muted) text-[10px] sm:text-xs">
+                    ({{ produto.totalAvaliacoes }})
+                  </span>
+
                 </div>
-                <span class="text-emerald-600 font-medium whitespace-nowrap">{{ produto.unidadesDisponiveis }}
-                  un.</span>
+
+                <span class="text-emerald-600 font-medium whitespace-nowrap">
+                  {{ produto.unidadesDisponiveis }} un.
+                </span>
+
               </div>
 
 
-              <div class="flex items-center justify-between pt-3 border-t border-[#F2ECE4] gap-2">
-                <span class="font-serif font-bold text-[#E28597] text-lg sm:text-xl truncate">{{ produto.preco |
-                  currency:'BRL' }}</span>
+
+              <div class="flex items-center justify-between pt-3 border-t border-(--bg-surface) gap-2">
+
+                <span class="font-serif font-bold text-(--primary) text-lg sm:text-xl truncate">
+                  {{ produto.preco | currency:'BRL' }}
+                </span>
+
                 <button
-                  class="bg-[#E28597] cursor-pointer hover:bg-[#d07587] text-white text-xs font-semibold px-3 sm:px-4 py-2 rounded-full transition-all flex items-center gap-1 shadow-sm active:scale-95 shrink-0">
+                  class="bg-(--primary) cursor-pointer hover:bg-(--primary-hover) text-(--text-on-primary) text-xs font-semibold px-3 sm:px-4 py-2 rounded-full transition-all flex items-center gap-1 shadow-sm active:scale-95 shrink-0">
+
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                   </svg>
+
                   Pedir
+
                 </button>
+
               </div>
 
             </div>
+
           </div>
+
         </swiper-slide>
         }
+
       </swiper-container>
 
+
+
+      @if (produtos.length > 4) {
       <button (click)="nextSlide(swiperRef)"
-        class="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white border border-[#E6DDD3] text-[#3E2A22] items-center justify-center shadow-sm hover:bg-[#FFF2E6] hover:border-[#E28597] transition-all">
+        class="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) text-(--text-main) items-center justify-center shadow-sm hover:bg-(--bg-badge) hover:border-(--primary) transition-all cursor-pointer">
+
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
         </svg>
+
       </button>
+      }
 
     </div>
 
   </div>
 
 </section>
+}

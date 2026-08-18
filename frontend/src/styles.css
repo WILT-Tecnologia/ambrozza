@@ -1,5 +1,22 @@
 @import 'tailwindcss';
 
+:root {
+  --primary: #e28597;
+  --primary-hover: #d07587;
+  --text-main: #3e2a22;
+  --text-muted: #735e54;
+  --bg-footer: #fbf2e7;
+  --border-color: #e6ddd3;
+  --bg-surface: #f2ece4;
+  --bg-badge: #fff2e6;
+  --text-badge: #a66033;
+  --bg-card: #ffffff;
+  --star-color: #fbbf24;
+  --modal-backdrop: rgba(0, 0, 0, 0.5);
+  --text-on-primary: #ffffff;
+  --hero-gradient: linear-gradient(90deg, #ffe9e7 0%, #ffede6 35%, #fff2e6 70%, #fefbf3 100%);
+}
+
 html,
 body {
   margin: 0;

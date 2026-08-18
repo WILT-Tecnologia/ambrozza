@@ -74,19 +74,21 @@ export class DestaquesComponent {
       imagem:
         'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=800&auto=format&fit=crop',
     },
+
     {
       id: 5,
-      categoria: 'Delícia',
-      nome: 'Red Velvet Clássico',
-      descricao: 'Massa vermelha aveludada com recheio cremoso de cream cheese artesanal.',
-      preco: 159.9,
-      avaliacao: 4.9,
-      totalAvaliacoes: 64,
-      unidadesDisponiveis: 6,
+      categoria: 'Infantil',
+      nome: 'Festa Confete Infantil',
+      descricao: 'Massa colorida com confeitos, buttercream pastel e velas inclusídas.',
+      preco: 139.9,
+      avaliacao: 4.7,
+      totalAvaliacoes: 73,
+      unidadesDisponiveis: 15,
       imagem:
-        'https://images.unsplash.com/photo-1621303837174-89787a7d4729?q=80&w=872&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=800&auto=format&fit=crop',
     },
   ];
+
   nextSlide(swiperRef: any) {
     swiperRef.swiper.slideNext();
   }

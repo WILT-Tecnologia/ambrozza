@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+import { AvaliacaoCardComponent } from './components/avaliacao-card.component';
+import { AvaliacoesVazioComponent } from './components/avaliations-empty.component';
+
 export interface Avaliacao {
   id: string | number;
   autor: string;
@@ -15,7 +18,7 @@ export interface Avaliacao {
 
 @Component({
   selector: 'app-avaliations-home',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AvaliacoesVazioComponent, AvaliacaoCardComponent],
   templateUrl: './avaliations.component.html',
 })
 export class AvaliationsHomeComponent {
