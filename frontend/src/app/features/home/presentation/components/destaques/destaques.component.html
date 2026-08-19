@@ -1,153 +1,153 @@
-@if (produtos.length >= 3) {
-<section class="w-full bg-transparent pt-2 pb-16 px-4 sm:px-6 lg:px-8">
-
+@if (hasEnoughItems) {
+<section class="w-full bg-transparent pt-4 pb-20">
   <div class="container-padrao">
 
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-1 gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
       <div>
         <span class="text-xs uppercase tracking-widest text-(--text-muted) font-semibold block mb-1">
-          Seleção da casa
+          {{ eyebrow }}
         </span>
 
         <h2 class="font-serif text-3xl sm:text-4xl font-bold text-(--text-main)">
-          Produtos em destaque
+          {{ sectionTitle }}
         </h2>
       </div>
 
-      <a routerLink="/cardapio"
-        class="inline-flex items-center gap-1.5 text-sm font-semibold text-(--primary) hover:text-(--primary-hover) transition-colors group">
-        Ver todos
+      <button type="button" (click)="verTodosClicked.emit()"
+        class="group inline-flex items-center gap-1.5 text-sm font-semibold text-(--text-main)/70 hover:text-(--primary) cursor-pointer transition-colors duration-200">
 
-        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
-        </svg>
-      </a>
+        <span>Ver todos</span>
+
+        <mat-icon
+          class="text-[18px]! w-4.5! h-4.5! transition-transform duration-300 ease-out group-hover:translate-x-1">
+          arrow_forward
+        </mat-icon>
+
+      </button>
     </div>
 
+    @if (loading) {
 
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (s of skeletonPlaceholders; track $index) {
+      <div class="h-80 rounded-2xl bg-(--bg-surface) animate-pulse"></div>
+      }
+    </div>
 
-    <div class="relative" [class.lg:px-12]="produtos.length > 4" [class.lg:-mx-12]="produtos.length > 4">
+    } @else if (errorMessage) {
 
+    <div
+      class="rounded-2xl border border-dashed border-(--border-color) bg-(--bg-surface) text-(--text-muted) text-center py-10 px-6">
+      {{ errorMessage }}
+    </div>
 
-      @if (produtos.length > 4) {
-      <button (click)="prevSlide(swiperRef)"
-        class="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) text-(--text-main) items-center justify-center shadow-sm hover:bg-(--bg-badge) hover:border-(--primary) transition-all cursor-pointer">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+    } @else {
+
+    <div class="relative min-w-0">
+
+      @if (isCarouselMode && canScrollPrev) {
+      <button type="button" (click)="scroll('prev')" aria-label="Ver itens anteriores"
+        class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) shadow-sm flex items-center justify-center text-(--text-main) hover:bg-(--primary) hover:text-(--text-on-primary) transition-all cursor-pointer">
+
+        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+          <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
+
       </button>
       }
 
+      <div class="min-w-0 px-1 -mx-2">
 
-      <swiper-container #swiperRef pagination="false" navigation="false" init="true" slides-per-view="auto"
-        space-between="16" centered-slides="false" class="pt-2 pb-6" [class.justify-center]="produtos.length === 3">
+        <div #track (scroll)="onScroll()"
+          class="flex gap-6 pt-2 pb-2 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none [&::-webkit-scrollbar]:hidden">
 
-        @for (produto of produtos; track produto.id) {
+          @for (item of items; track item.id) {
 
-        <swiper-slide class="h-auto flex py-3 px-1" [class.!w-[88%]]="produtos.length !== 3"
-          [class.sm:!w-[46%]]="produtos.length !== 3" [class.md:!w-[40%]]="produtos.length !== 3"
-          [class.lg:!w-[300px]]="produtos.length !== 3" [class.xl:!w-[310px]]="produtos.length !== 3"
-          [class.w-full]="produtos.length === 3" [class.sm:w-1/2]="produtos.length === 3"
-          [class.lg:w-1/3]="produtos.length === 3" [class.max-w-[420px]]="produtos.length === 3">
+          <article
+            class="snap-start shrink-0 w-[80%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] bg-(--bg-card) rounded-2xl border border-(--border-color) shadow-sm overflow-hidden flex flex-col transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md hover:border-(--primary)/40">
 
-          <div
-            class="w-full h-full bg-(--bg-card) rounded-3xl overflow-hidden border border-(--border-color) flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-(--primary) hover:shadow-md relative z-10 group">
+            <div class="relative h-44">
 
-            <div>
+              <img [src]="item.imageUrl" [alt]="item.imageAlt || item.title" loading="lazy"
+                class="w-full h-full object-cover" />
 
+              <div class="absolute top-3 left-3 flex flex-col items-start gap-1.5">
 
-              <div class="relative w-full h-56 bg-(--bg-surface)">
+                @if (item.categoryLabel) {
+                <span class="bg-(--bg-card) text-(--text-main) text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+                  {{ item.categoryLabel }}
+                </span>
+                }
 
-                <div class="w-full h-full overflow-hidden">
-                  <img [src]="produto.imagem" [alt]="produto.nome"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-
-
-                <div
-                  class="absolute top-3 left-3 flex flex-col items-start gap-1.5 z-20 pointer-events-none transition-transform duration-300 ease-out group-hover:scale-[0.98]">
-
-                  <span
-                    class="bg-(--bg-card) text-(--text-main) text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm">
-                    {{ produto.categoria }}
-                  </span>
-
-                  <span
-                    class="bg-(--primary) text-(--text-on-primary) text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
-                    <span class="text-[10px]">✦</span>
-                    Destaque
-                  </span>
-
-                </div>
+                @if (item.highlightLabel) {
+                <span class="bg-(--primary) text-(--text-on-primary) text-xs font-semibold px-3 py-1 rounded-full">
+                  {{ item.highlightLabel }}
+                </span>
+                }
 
               </div>
-
-
-
-              <div class="p-4 pb-2">
-
-                <h3 class="font-serif font-bold text-(--text-main) text-lg mb-1.5 leading-snug">
-                  {{ produto.nome }}
-                </h3>
-
-                <p class="text-xs text-(--text-muted) line-clamp-2 mb-4 leading-relaxed">
-                  {{ produto.descricao }}
-                </p>
-
-              </div>
-
             </div>
 
+            <div class="p-4 flex flex-col gap-2 flex-1">
 
+              <h3 class="font-serif font-bold text-(--text-main) text-base">
+                {{ item.title }}
+              </h3>
 
-            <div class="p-4 pt-0 mt-auto">
+              @if (item.description) {
+              <p class="text-sm text-(--text-muted) line-clamp-2">
+                {{ item.description }}
+              </p>
+              }
 
+              @if (item.rating || item.stockLabel) {
+              <div class="flex items-center justify-between text-sm">
 
-              <div class="flex items-center justify-between mb-3 text-xs gap-1">
+                @if (item.rating) {
+                <span class="flex items-center gap-1">
 
-                <div class="flex items-center gap-1">
+                  <span class="flex text-(--star-color) text-sm gap-0.5">
+                    @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+                    <span>
+                      {{ estrela <= item.rating! ? '★' : '☆' }} </span>
+                        }
+                    </span>
 
-                  <div class="flex text-(--star-color) text-sm sm:text-base gap-0.5">
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                    <span>★</span>
-                  </div>
+                    <span class="font-bold text-(--text-main)">
+                      {{ item.rating | number: '1.1-1' }}
+                    </span>
 
-                  <span class="font-bold text-(--text-main) text-xs sm:text-sm ml-0.5">
-                    {{ produto.avaliacao }}
+                    @if (item.reviewsCount) {
+                    <span class="text-(--text-muted)">
+                      ({{ item.reviewsCount }})
+                    </span>
+                    }
+
                   </span>
+                  }
 
-                  <span class="text-(--text-muted) text-[10px] sm:text-xs">
-                    ({{ produto.totalAvaliacoes }})
+                  @if (item.stockLabel) {
+                  <span class="text-emerald-600 font-semibold text-xs">
+                    {{ item.stockLabel }}
                   </span>
-
-                </div>
-
-                <span class="text-emerald-600 font-medium whitespace-nowrap">
-                  {{ produto.unidadesDisponiveis }} un.
-                </span>
+                  }
 
               </div>
+              }
 
+              <div class="mt-auto pt-4 border-t border-(--border-color) flex items-center justify-between">
 
-
-              <div class="flex items-center justify-between pt-3 border-t border-(--bg-surface) gap-2">
-
-                <span class="font-serif font-bold text-(--primary) text-lg sm:text-xl truncate">
-                  {{ produto.preco | currency:'BRL' }}
+                <span class="font-serif font-extrabold text-(--primary) text-lg">
+                  {{ formatPrice(item.price) }}
                 </span>
 
-                <button
-                  class="bg-(--primary) cursor-pointer hover:bg-(--primary-hover) text-(--text-on-primary) text-xs font-semibold px-3 sm:px-4 py-2 rounded-full transition-all flex items-center gap-1 shadow-sm active:scale-95 shrink-0">
+                <button type="button" (click)="onOrder(item)"
+                  class="inline-flex items-center gap-1 bg-(--primary) hover:bg-(--primary-hover) active:scale-95 text-(--text-on-primary) text-sm font-semibold px-4 py-2 rounded-full transition-all cursor-pointer">
 
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                  </svg>
+                  <span class="text-base leading-none">+</span>
 
-                  Pedir
+                  {{ item.ctaLabel || 'Pedir' }}
 
                 </button>
 
@@ -155,21 +155,21 @@
 
             </div>
 
-          </div>
+          </article>
 
-        </swiper-slide>
-        }
+          }
 
-      </swiper-container>
+        </div>
 
+      </div>
 
+      @if (isCarouselMode && canScrollNext) {
+      <button type="button" (click)="scroll('next')" aria-label="Ver próximos itens"
+        class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) shadow-sm flex items-center justify-center text-(--text-main) hover:bg-(--primary) hover:text-(--text-on-primary) transition-all cursor-pointer">
 
-      @if (produtos.length > 4) {
-      <button (click)="nextSlide(swiperRef)"
-        class="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) text-(--text-main) items-center justify-center shadow-sm hover:bg-(--bg-badge) hover:border-(--primary) transition-all cursor-pointer">
-
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+          <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
 
       </button>
@@ -177,7 +177,8 @@
 
     </div>
 
-  </div>
+    }
 
+  </div>
 </section>
 }

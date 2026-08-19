@@ -1,99 +1,227 @@
-import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { register } from 'swiper/element/bundle';
-register();
-interface ProdutoDestaque {
-  id: number;
-  categoria: string;
-  nome: string;
-  descricao: string;
-  preco: number;
-  avaliacao: number;
-  totalAvaliacoes: number;
-  unidadesDisponiveis: number;
-  imagem: string;
+import { DecimalPipe } from '@angular/common';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+
+export interface CarouselCardItem {
+  id: string | number;
+  imageUrl: string;
+  imageAlt?: string;
+  categoryLabel?: string;
+  highlightLabel?: string;
+  title: string;
+  description?: string;
+  rating?: number;
+  reviewsCount?: number;
+  stockLabel?: string;
+  price: number;
+  ctaLabel?: string;
 }
+
+const MOCK_ITEMS: CarouselCardItem[] = [
+  {
+    id: 1,
+    imageUrl:
+      'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=85',
+    categoryLabel: 'Aniversário',
+    highlightLabel: '✨ Destaque',
+    title: 'Bolo Rosé Framboesa',
+    description: 'Massa branca aerada, recheio de framboesa fresca e buttercream rosé...',
+    rating: 4.9,
+    reviewsCount: 128,
+    stockLabel: '12 un.',
+    price: 189.9,
+  },
+  {
+    id: 2,
+    imageUrl:
+      'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=900&q=85',
+    categoryLabel: 'Chocolate',
+    highlightLabel: '✨ Destaque',
+    title: 'Trufado Belga Intenso',
+    description: 'Três camadas de massa de chocolate meio amargo com ganache belga e...',
+    rating: 4.8,
+    reviewsCount: 96,
+    stockLabel: '8 un.',
+    price: 164,
+  },
+  {
+    id: 3,
+    imageUrl:
+      'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=900&q=85',
+    categoryLabel: 'Casamento',
+    highlightLabel: '✨ Destaque',
+    title: 'Blanc Casamento 3 Andares',
+    description: 'Naked cake branco com flores de açúcar em rosé. Serve até 80...',
+    rating: 5,
+    reviewsCount: 41,
+    stockLabel: '3 un.',
+    price: 890,
+  },
+  {
+    id: 4,
+    imageUrl:
+      'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=900&q=85',
+    categoryLabel: 'Casamento',
+    highlightLabel: '✨ Destaque',
+    title: 'Blanc Casamento 3 Andares',
+    description: 'Naked cake branco com flores de açúcar em rosé. Serve até 80...',
+    rating: 5,
+    reviewsCount: 41,
+    stockLabel: '3 un.',
+    price: 890,
+  },
+
+  {
+    id: 5,
+    imageUrl:
+      'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=900&q=85',
+    categoryLabel: 'Casamento',
+    highlightLabel: '✨ Destaque',
+    title: 'Blanc Casamento 3 Andares',
+    description: 'Naked cake branco com flores de açúcar em rosé. Serve até 80...',
+    rating: 5,
+    reviewsCount: 41,
+    stockLabel: '3 un.',
+    price: 890,
+  },
+];
 
 @Component({
   selector: 'app-destaques',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [DecimalPipe, MatIconModule],
   templateUrl: './destaques.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DestaquesComponent {
-  produtos: ProdutoDestaque[] = [
-    {
-      id: 1,
-      categoria: 'Aniversário',
-      nome: 'Bolo Rosé Framboesa',
-      descricao:
-        'Massa branca aerada, recheio de framboesa fresca e buttercream rosé com folha de ouro.',
-      preco: 189.9,
-      avaliacao: 4.9,
-      totalAvaliacoes: 128,
-      unidadesDisponiveis: 12,
-      imagem:
-        'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop',
-    },
-    {
-      id: 2,
-      categoria: 'Chocolate',
-      nome: 'Trufado Belga Intenso',
-      descricao:
-        'Três camadas de massa de chocolate meio amargo com ganache belga e raspas artesanais.',
-      preco: 164.0,
-      avaliacao: 4.8,
-      totalAvaliacoes: 96,
-      unidadesDisponiveis: 8,
-      imagem:
-        'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=800&auto=format&fit=crop',
-    },
-    {
-      id: 3,
-      categoria: 'Casamento',
-      nome: 'Blanc Casamento 3 Andares',
-      descricao: 'Naked cake branco com flores de açúcar em rosé. Serve até 80 pessoas.',
-      preco: 890.0,
-      avaliacao: 5.0,
-      totalAvaliacoes: 41,
-      unidadesDisponiveis: 3,
-      imagem:
-        'https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?q=80&w=1452&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    {
-      id: 4,
-      categoria: 'Infantil',
-      nome: 'Festa Confete Infantil',
-      descricao: 'Massa colorida com confeitos, buttercream pastel e velas inclusídas.',
-      preco: 139.9,
-      avaliacao: 4.7,
-      totalAvaliacoes: 73,
-      unidadesDisponiveis: 15,
-      imagem:
-        'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=800&auto=format&fit=crop',
-    },
+export class DestaquesComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @Input() items: CarouselCardItem[] = MOCK_ITEMS;
+  @Input() loading = false;
+  @Input() errorMessage: string | null = null;
+  @Input() eyebrow = 'Seleção da casa';
+  @Input() sectionTitle = 'Produtos em destaque';
+  @Input() emptyStateMessage = 'Nenhum produto disponível no momento.';
 
-    {
-      id: 5,
-      categoria: 'Infantil',
-      nome: 'Festa Confete Infantil',
-      descricao: 'Massa colorida com confeitos, buttercream pastel e velas inclusídas.',
-      preco: 139.9,
-      avaliacao: 4.7,
-      totalAvaliacoes: 73,
-      unidadesDisponiveis: 15,
-      imagem:
-        'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=800&auto=format&fit=crop',
-    },
-  ];
+  @Output() itemSelected = new EventEmitter<CarouselCardItem>();
+  @Output() verTodosClicked = new EventEmitter<void>();
 
-  nextSlide(swiperRef: any) {
-    swiperRef.swiper.slideNext();
+  @ViewChild('track') private trackRef?: ElementRef<HTMLDivElement>;
+
+  private resizeObserver?: ResizeObserver;
+
+  canScrollPrev = false;
+  canScrollNext = false;
+
+  readonly skeletonPlaceholders = Array.from({ length: 4 });
+
+  constructor(private readonly cdr: ChangeDetectorRef) {}
+
+  get hasEnoughItems(): boolean {
+    return !!this.items && this.items.length >= 4;
   }
 
-  prevSlide(swiperRef: any) {
-    swiperRef.swiper.slidePrev();
+  get isCarouselMode(): boolean {
+    return this.hasEnoughItems;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['items']) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          this.updateScrollState();
+        });
+      });
+    }
+  }
+
+  ngAfterViewInit(): void {
+    const track = this.trackRef?.nativeElement;
+
+    if (!track) return;
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateScrollState();
+    });
+
+    this.resizeObserver.observe(track);
+
+    requestAnimationFrame(() => {
+      this.updateScrollState();
+    });
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateScrollState();
+  }
+
+  onScroll(): void {
+    this.updateScrollState();
+  }
+
+  scroll(direction: 'prev' | 'next'): void {
+    const track = this.trackRef?.nativeElement;
+
+    if (!track) return;
+
+    const card = track.querySelector('article') as HTMLElement | null;
+
+    if (!card) return;
+
+    const gap = 24;
+    const scrollAmount = card.offsetWidth + gap;
+
+    track.scrollBy({
+      left: direction === 'next' ? scrollAmount : -scrollAmount,
+      behavior: 'smooth',
+    });
+  }
+
+  onOrder(item: CarouselCardItem): void {
+    this.itemSelected.emit(item);
+  }
+
+  trackById(_index: number, item: CarouselCardItem): string | number {
+    return item.id;
+  }
+
+  formatPrice(value: number): string {
+    return `R$ ${value.toFixed(2).replace('.', ',')}`;
+  }
+
+  private updateScrollState(): void {
+    const track = this.trackRef?.nativeElement;
+
+    if (!track || !this.hasEnoughItems) {
+      this.canScrollPrev = false;
+      this.canScrollNext = false;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const epsilon = 2;
+
+    this.canScrollPrev = track.scrollLeft > epsilon;
+
+    this.canScrollNext = track.scrollLeft + track.clientWidth < track.scrollWidth - epsilon;
+
+    this.cdr.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
   }
 }
