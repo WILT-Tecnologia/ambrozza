@@ -2,6 +2,8 @@ import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
+import { cpfCnpjValidator } from '../../shared/utils/validators-cpf-cnpj';
+import { phoneValidator } from '../../shared/utils/validators-phone';
 import { OnboardingStepsComponent } from './components/onboarding-steps.component';
 import { Step1StoreComponent } from './components/step-1-store/store-onboarding';
 import { Step2OwnerComponent } from './components/step-2-owner/owner-onboarding';
@@ -9,7 +11,6 @@ import { Step3AddressComponent } from './components/step-3-address/address-onboa
 import { Step4OperationComponent } from './components/step-4-operation/operation-onboarding';
 import { Step5PaletteComponent } from './components/step-5-palette/palette-onboarding';
 import { Step6ReviewComponent } from './components/step-6-review/review-onboarding';
-
 @Component({
   selector: 'app-onboarding',
   standalone: true,
@@ -124,23 +125,25 @@ export class OnboardingComponent {
   currentMaxStep = 6;
   currentStep = signal(1);
   onboardingForm: FormGroup;
-
   constructor(private fb: FormBuilder) {
     this.onboardingForm = this.fb.group({
-      name: ['', Validators.required],
-      slug: ['', Validators.required],
-      description: [''],
-      ownerName: ['', Validators.required],
-      document: ['', Validators.required],
-      phone: ['', Validators.required],
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+      slug: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(250)]],
+
+      ownerName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+      document: ['', [Validators.required, cpfCnpjValidator]],
+      phone: ['', [Validators.required, phoneValidator]],
       email: [{ value: 'contato@usuario.com', disabled: true }],
-      cep: ['', Validators.required],
-      state: ['', Validators.required],
-      city: ['', Validators.required],
-      street: ['', Validators.required],
-      number: ['', Validators.required],
-      neighborhood: ['', Validators.required],
-      complement: [''],
+
+      cep: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(9)]],
+      state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
+      city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
+      street: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+      number: ['', [Validators.required, Validators.maxLength(10)]],
+      neighborhood: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      complement: ['', [Validators.maxLength(60)]],
+
       allowDelivery: [true],
       allowPickup: [false],
       acceptTerms: [false, Validators.requiredTrue],
@@ -149,7 +152,55 @@ export class OnboardingComponent {
     });
   }
 
-  nextStep() {
+  nextStep(): void {
+    const step = this.currentStep();
+
+    const stepFields: Record<number, string[]> = {
+      1: ['name', 'slug', 'description'],
+      2: ['ownerName', 'document', 'phone'],
+      3: ['cep', 'state', 'city', 'street', 'number', 'neighborhood'],
+    };
+
+    const fields = stepFields[step];
+
+    if (fields) {
+      let hasError = false;
+
+      fields.forEach((fieldName) => {
+        const control = this.onboardingForm.get(fieldName);
+
+        if (control?.invalid) {
+          control.markAsTouched();
+          hasError = true;
+        }
+      });
+
+      if (hasError) {
+        return;
+      }
+    }
+
+    if (step === 4) {
+      const delivery = this.onboardingForm.get('allowDelivery')?.value;
+      const pickup = this.onboardingForm.get('allowPickup')?.value;
+
+      if (!delivery && !pickup) {
+        this.onboardingForm.get('allowDelivery')?.markAsTouched();
+        this.onboardingForm.get('allowPickup')?.markAsTouched();
+
+        return;
+      }
+    }
+
+    if (step === 5) {
+      const colorPalette = this.onboardingForm.get('colorPalette');
+
+      if (colorPalette?.invalid) {
+        colorPalette.markAsTouched();
+        return;
+      }
+    }
+
     this.currentStep.update((s) => Math.min(s + 1, this.currentMaxStep));
   }
 
@@ -159,6 +210,32 @@ export class OnboardingComponent {
 
   goToStep(step: number) {
     this.currentStep.set(step);
+  }
+
+  get isCurrentStepValid(): boolean {
+    const step = this.currentStep();
+
+    if (step === 1) {
+      return !!(this.onboardingForm.get('name')?.valid && this.onboardingForm.get('slug')?.valid);
+    }
+    if (step === 2) {
+      return !!(
+        this.onboardingForm.get('ownerName')?.valid &&
+        this.onboardingForm.get('document')?.valid &&
+        this.onboardingForm.get('phone')?.valid
+      );
+    }
+    if (step === 3) {
+      return !!(
+        this.onboardingForm.get('cep')?.valid &&
+        this.onboardingForm.get('state')?.valid &&
+        this.onboardingForm.get('city')?.valid &&
+        this.onboardingForm.get('street')?.valid &&
+        this.onboardingForm.get('number')?.valid &&
+        this.onboardingForm.get('neighborhood')?.valid
+      );
+    }
+    return true;
   }
 
   submit() {
