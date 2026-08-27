@@ -1,0 +1,184 @@
+@if (hasEnoughItems) {
+<section class="w-full bg-transparent pt-4 pb-20">
+  <div class="container-padrao">
+
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-(--text-muted) font-semibold block mb-1">
+          {{ eyebrow }}
+        </span>
+
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-(--text-main)">
+          {{ sectionTitle }}
+        </h2>
+      </div>
+
+      <button type="button" (click)="verTodosClicked.emit()"
+        class="group inline-flex items-center gap-1.5 text-sm font-semibold text-(--text-main)/70 hover:text-(--primary) cursor-pointer transition-colors duration-200">
+
+        <span>Ver todos</span>
+
+        <mat-icon
+          class="text-[18px]! w-4.5! h-4.5! transition-transform duration-300 ease-out group-hover:translate-x-1">
+          arrow_forward
+        </mat-icon>
+
+      </button>
+    </div>
+
+    @if (loading) {
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (s of skeletonPlaceholders; track $index) {
+      <div class="h-80 rounded-2xl bg-(--bg-surface) animate-pulse"></div>
+      }
+    </div>
+
+    } @else if (errorMessage) {
+
+    <div
+      class="rounded-2xl border border-dashed border-(--border-color) bg-(--bg-surface) text-(--text-muted) text-center py-10 px-6">
+      {{ errorMessage }}
+    </div>
+
+    } @else {
+
+    <div class="relative min-w-0">
+
+      @if (isCarouselMode && canScrollPrev) {
+      <button type="button" (click)="scroll('prev')" aria-label="Ver itens anteriores"
+        class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) shadow-sm flex items-center justify-center text-(--text-main) hover:bg-(--primary) hover:text-(--text-on-primary) transition-all cursor-pointer">
+
+        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+          <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+
+      </button>
+      }
+
+      <div class="min-w-0 px-1 -mx-2">
+
+        <div #track (scroll)="onScroll()"
+          class="flex gap-6 pt-2 pb-2 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none [&::-webkit-scrollbar]:hidden">
+
+          @for (item of items; track item.id) {
+
+          <article
+            class="snap-start shrink-0 w-[80%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] bg-(--bg-card) rounded-2xl border border-(--border-color) shadow-sm overflow-hidden flex flex-col transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md hover:border-(--primary)/40">
+
+            <div class="relative h-44">
+
+              <img [src]="item.imageUrl" [alt]="item.imageAlt || item.title" loading="lazy"
+                class="w-full h-full object-cover" />
+
+              <div class="absolute top-3 left-3 flex flex-col items-start gap-1.5">
+
+                @if (item.categoryLabel) {
+                <span class="bg-(--bg-card) text-(--text-main) text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+                  {{ item.categoryLabel }}
+                </span>
+                }
+
+                @if (item.highlightLabel) {
+                <span class="bg-(--primary) text-(--text-on-primary) text-xs font-semibold px-3 py-1 rounded-full">
+                  {{ item.highlightLabel }}
+                </span>
+                }
+
+              </div>
+            </div>
+
+            <div class="p-4 flex flex-col gap-2 flex-1">
+
+              <h3 class="font-serif font-bold text-(--text-main) text-base">
+                {{ item.title }}
+              </h3>
+
+              @if (item.description) {
+              <p class="text-sm text-(--text-muted) line-clamp-2">
+                {{ item.description }}
+              </p>
+              }
+
+              @if (item.rating || item.stockLabel) {
+              <div class="flex items-center justify-between text-sm">
+
+                @if (item.rating) {
+                <span class="flex items-center gap-1">
+
+                  <span class="flex text-(--star-color) text-sm gap-0.5">
+                    @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+                    <span>
+                      {{ estrela <= item.rating! ? '★' : '☆' }} </span>
+                        }
+                    </span>
+
+                    <span class="font-bold text-(--text-main)">
+                      {{ item.rating | number: '1.1-1' }}
+                    </span>
+
+                    @if (item.reviewsCount) {
+                    <span class="text-(--text-muted)">
+                      ({{ item.reviewsCount }})
+                    </span>
+                    }
+
+                  </span>
+                  }
+
+                  @if (item.stockLabel) {
+                  <span class="text-emerald-600 font-semibold text-xs">
+                    {{ item.stockLabel }}
+                  </span>
+                  }
+
+              </div>
+              }
+
+              <div class="mt-auto pt-4 border-t border-(--border-color) flex items-center justify-between">
+
+                <span class="font-serif font-extrabold text-(--primary) text-lg">
+                  {{ formatPrice(item.price) }}
+                </span>
+
+                <button type="button" (click)="onOrder(item)"
+                  class="inline-flex items-center gap-1 bg-(--primary) hover:bg-(--primary-hover) active:scale-95 text-(--text-on-primary) text-sm font-semibold px-4 py-2 rounded-full transition-all cursor-pointer">
+
+                  <span class="text-base leading-none">+</span>
+
+                  {{ item.ctaLabel || 'Pedir' }}
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+          }
+
+        </div>
+
+      </div>
+
+      @if (isCarouselMode && canScrollNext) {
+      <button type="button" (click)="scroll('next')" aria-label="Ver próximos itens"
+        class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-(--bg-card) border border-(--border-color) shadow-sm flex items-center justify-center text-(--text-main) hover:bg-(--primary) hover:text-(--text-on-primary) transition-all cursor-pointer">
+
+        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+          <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+
+      </button>
+      }
+
+    </div>
+
+    }
+
+  </div>
+</section>
+}

@@ -1,5 +1,22 @@
 @import 'tailwindcss';
 
+:root {
+  --primary: #e28597;
+  --primary-hover: #d07587;
+  --text-main: #3e2a22;
+  --text-muted: #735e54;
+  --bg-footer: #fbf2e7;
+  --border-color: #e6ddd3;
+  --bg-surface: #f2ece4;
+  --bg-badge: #fff2e6;
+  --text-badge: #a66033;
+  --bg-card: #ffffff;
+  --star-color: #fbbf24;
+  --modal-backdrop: rgba(0, 0, 0, 0.5);
+  --text-on-primary: #ffffff;
+  --hero-gradient: linear-gradient(90deg, #ffe9e7 0%, #ffede6 35%, #fff2e6 70%, #fefbf3 100%);
+}
+
 html,
 body {
   margin: 0;
@@ -7,7 +24,7 @@ body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  background-color: #fff2e6;
+  background-color: #fef9f5;
 }
 
 .example-container {
@@ -15,9 +32,37 @@ body {
   width: 100vw;
 }
 
+mat-sidenav-container,
 mat-sidenav-content {
+  background-color: #fef9f5 !important;
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+@layer components {
+  .container-padrao {
+    @apply w-full mx-auto px-6 sm:px-8 lg:px-12;
+    max-width: 1380px;
+  }
+  @media (min-width: 640px) {
+    .container-padrao {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-padrao {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+
+  @media (min-width: 2500px) {
+    .container-padrao {
+      max-width: 1920px;
+    }
+  }
 }

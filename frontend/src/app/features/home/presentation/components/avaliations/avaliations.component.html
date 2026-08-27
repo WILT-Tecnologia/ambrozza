@@ -1,0 +1,107 @@
+<section class="w-full bg-transparent pt-4 pb-20">
+  <div class="container-padrao">
+
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-(--text-muted) font-semibold block mb-1">
+          Quem provou, aprovou
+        </span>
+
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-(--text-main)">
+          Avaliações recentes
+        </h2>
+      </div>
+
+      @if (listaAvaliacoes.length > 0) {
+      <div
+        class="flex items-center gap-3 bg-(--bg-card) px-4 py-2 rounded-2xl border border-(--border-color) shadow-sm">
+        <div class="flex text-(--star-color) text-sm gap-0.5">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+
+        <span class="text-xs font-bold text-(--text-main)">
+          {{ mediaGeral }}
+          <span class="text-(--text-muted) font-normal">
+            ({{ totalEntregas }})
+          </span>
+        </span>
+      </div>
+      }
+    </div>
+
+    @if (listaAvaliacoes.length > 0) {
+    <div class="grid grid-cols-1 gap-6 items-center" [class.max-w-xl]="listaAvaliacoes.length === 1"
+      [class.mx-auto]="listaAvaliacoes.length === 1" [class.md:grid-cols-2]="listaAvaliacoes.length === 2"
+      [class.md:grid-cols-3]="listaAvaliacoes.length >= 3">
+
+      @for (avaliacao of listaAvaliacoes; track avaliacao.id; let i = $index) {
+      <app-avaliacao-card-home [avaliacao]="avaliacao" [indice]="i" [totalLista]="listaAvaliacoes.length"
+        (aoClicar)="abrirModal($event)">
+      </app-avaliacao-card-home>
+      }
+
+    </div>
+
+    } @else {
+    <app-avaliations-empty-home></app-avaliations-empty-home>
+    }
+
+  </div>
+
+  @if (avaliacaoSelecionada) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-(--modal-backdrop) backdrop-blur-sm"
+    (click)="fecharModal()">
+
+    <div class="bg-(--bg-card) rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-xl border border-(--border-color)"
+      (click)="$event.stopPropagation()">
+
+      <button (click)="fecharModal()"
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-(--bg-surface) text-(--text-main) flex items-center justify-center hover:bg-(--primary) hover:text-(--text-on-primary) transition-all cursor-pointer">
+        ✕
+      </button>
+
+      <div class="flex items-center justify-between mb-4 pr-8">
+        <div class="flex text-(--star-color) text-base gap-0.5">
+          @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+          <span>{{ estrela <= avaliacaoSelecionada.nota ? '★' : '☆' }}</span>
+              }
+        </div>
+
+        <span class="text-xs text-(--text-muted)">
+          {{ avaliacaoSelecionada.data }}
+        </span>
+      </div>
+
+      <p class="text-base sm:text-lg text-(--text-main) font-serif mb-6 leading-relaxed">
+        "{{ avaliacaoSelecionada.comentario }}"
+      </p>
+
+      @if (avaliacaoSelecionada.fotoUrl) {
+      <div class="w-full h-64 sm:h-72 rounded-2xl overflow-hidden mb-6 bg-(--bg-surface)">
+        <img [src]="avaliacaoSelecionada.fotoUrl" [alt]="avaliacaoSelecionada.autor"
+          class="w-full h-full object-cover" />
+      </div>
+      }
+
+      <div class="flex items-center justify-between pt-4 border-t border-(--bg-surface)">
+        <div>
+          <h4 class="font-serif font-bold text-(--text-main) text-base">
+            {{ avaliacaoSelecionada.autor }}
+          </h4>
+          <span class="text-xs text-(--primary) font-medium">
+            {{ avaliacaoSelecionada.produtoRelacionado }}
+          </span>
+        </div>
+
+        @if (avaliacaoSelecionada.verificado) {
+        <span class="text-xs bg-(--bg-badge) text-(--text-badge) px-3 py-1 rounded-full font-medium">
+          Verificado ✓
+        </span>
+        }
+      </div>
+
+    </div>
+  </div>
+  }
+
+</section>

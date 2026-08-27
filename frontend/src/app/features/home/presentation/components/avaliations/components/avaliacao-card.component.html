@@ -1,0 +1,48 @@
+<div (click)="aoClicar.emit(avaliacao)"
+  class="w-full bg-(--bg-card) rounded-3xl p-6 border border-(--border-color) flex flex-col justify-between transition-all duration-300 hover:border-(--primary) hover:shadow-md relative overflow-hidden group cursor-pointer"
+  [class.h-full]="totalLista !== 3 || indice !== 1"
+  [class.md:scale-90]="totalLista === 3 && (indice === 0 || indice === 2)"
+  [class.md:scale-105]="totalLista === 3 && indice === 1" [class.md:shadow-xl]="totalLista === 3 && indice === 1"
+  [class.md:z-10]="totalLista === 3 && indice === 1">
+
+  <div>
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <p class="text-sm sm:text-base text-(--text-muted) leading-relaxed">
+        "{{ avaliacao.comentario }}"
+      </p>
+      <div class="text-5xl font-serif leading-none select-none shrink-0" style="color: #F3CED5;">
+        “
+      </div>
+    </div>
+
+    @if (avaliacao.fotoUrl) {
+    <div class="border-t border-(--bg-surface) pt-4 mb-4">
+      <div class="w-full h-56 sm:h-64 rounded-2xl overflow-hidden bg-(--bg-surface)">
+        <img [src]="avaliacao.fotoUrl" [alt]="'Foto da avaliação de ' + avaliacao.autor"
+          class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" />
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="mt-auto pt-4 border-t border-(--bg-surface) flex items-center justify-between gap-2">
+    <div class="truncate">
+      <h4 class="font-serif font-bold text-(--text-main) text-sm truncate">
+        {{ avaliacao.autor }}
+      </h4>
+      <span class="text-[11px] text-(--text-muted) truncate block">
+        {{ avaliacao.produtoRelacionado }} · {{ avaliacao.data }}
+      </span>
+    </div>
+
+    <div class="flex items-center gap-1.5 shrink-0">
+      <div class="flex text-(--star-color) text-xs gap-0.5">
+        @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+        <span>{{ estrela <= avaliacao.nota ? '★' : '☆' }}</span>
+            }
+      </div>
+      <span class="text-xs font-bold text-(--text-muted)">{{ avaliacao.nota }}.0</span>
+    </div>
+  </div>
+
+</div>

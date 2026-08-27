@@ -1,0 +1,85 @@
+@if (produtos.length >= 6) {
+<section class="w-full bg-transparent pt-2 pb-16">
+  <div class="container-padrao">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
+      <div>
+        <span class="text-xs uppercase tracking-widest text-(--text-muted) font-semibold block mb-1">
+          Favoritos dos Clientes
+        </span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-(--text-main)">Mais vendidos</h2>
+      </div>
+    </div>
+
+
+    <div class="relative w-full overflow-hidden mask-fade py-6 -my-6">
+      <div class="flex gap-6 animate-marquee w-max hover:[animation-play-state:paused] px-4">
+
+        @for (item of [1, 2, 3, 4]; track item) {
+        @for (produto of produtos; track produto.id) {
+
+        <div
+          class="w-[320px] sm:w-87.5 bg-(--bg-card) rounded-3xl overflow-hidden border border-(--border-color) flex flex-col justify-between transition-all duration-300 ease-out hover:scale-[1.015] hover:border-(--primary) hover:shadow-lg relative z-10 group">
+
+          <div>
+
+            <div class="relative w-full h-60 sm:h-64 bg-(--bg-surface)">
+              <div class="w-full h-full overflow-hidden">
+                <img [src]="produto.imagem" [alt]="produto.nome"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+
+              <div class="absolute top-3 left-3 flex flex-col items-start gap-1.5 z-20 pointer-events-none">
+                <span
+                  class="bg-(--bg-card) text-(--text-main) text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm">
+                  {{ produto.categoria }}
+                </span>
+
+                <span *ngIf="produto.destaque"
+                  class="bg-(--primary) text-(--text-on-primary) text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+                  <span class="text-[10px]">✦</span> Destaque
+                </span>
+              </div>
+            </div>
+
+            <div class="p-5 pb-2">
+              <h3 class="font-serif font-bold text-(--text-main) text-xl mb-1.5 leading-snug">{{ produto.nome }}</h3>
+              <p class="text-xs sm:text-sm text-(--text-muted) line-clamp-2 mb-4 leading-relaxed">
+                {{ produto.descricao }}
+              </p>
+            </div>
+          </div>
+
+          <div class="p-5 pt-0 mt-auto">
+            <div class="flex items-center justify-between mb-3 text-xs gap-1">
+              <div class="flex items-center gap-1">
+                <div class="flex text-(--star-color) text-sm sm:text-base gap-0.5">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <span class="font-bold text-(--text-main) text-xs sm:text-sm ml-0.5">{{ produto.nota }}</span>
+                <span class="text-(--text-muted) text-[10px] sm:text-xs">({{ produto.reviews }})</span>
+              </div>
+              <span class="text-emerald-600 font-medium whitespace-nowrap">{{ produto.unidadesVendidas }} un.</span>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-(--bg-surface) gap-2">
+              <span class="font-serif font-bold text-(--primary) text-xl sm:text-2xl truncate">
+                R$ {{ produto.preco.toFixed(2).replace('.', ',') }}
+              </span>
+              <button
+                class="bg-(--primary) cursor-pointer hover:bg-(--primary-hover) text-(--text-on-primary) text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Pedir
+              </button>
+            </div>
+          </div>
+
+        </div>
+        }
+        }
+      </div>
+    </div>
+  </div>
+</section>
+}
