@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { onboardingGuard } from './core/guards/onboarding.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 
 export const routes: Routes = [
@@ -36,9 +37,17 @@ export const routes: Routes = [
       },
     ],
   },
-  // Rota de criação de loja isolada
+
+  {
+    path: 'cadastrar-loja/auth',
+    loadComponent: () =>
+      import('./features/onboarding/authentication/auth-page.component').then(
+        (m) => m.AuthPageComponent,
+      ),
+  },
   {
     path: 'onboarding',
+    canActivate: [onboardingGuard],
     loadComponent: () =>
       import('./features/onboarding/onboarding.component').then((m) => m.OnboardingComponent),
   },

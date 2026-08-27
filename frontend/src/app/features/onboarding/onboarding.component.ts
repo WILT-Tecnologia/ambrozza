@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AuthService } from '../../core/services/auth.service';
 import { cpfCnpjValidator } from '../../shared/utils/validators-cpf-cnpj';
 import { phoneValidator } from '../../shared/utils/validators-phone';
 import { OnboardingStepsComponent } from './components/onboarding-steps.component';
@@ -122,19 +123,26 @@ import { Step6ReviewComponent } from './components/step-6-review/review-onboardi
   `,
 })
 export class OnboardingComponent {
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+
   currentMaxStep = 6;
   currentStep = signal(1);
   onboardingForm: FormGroup;
-  constructor(private fb: FormBuilder) {
+  constructor() {
+    const currentUser = this.authService.getCurrentUser();
     this.onboardingForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
       slug: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(250)]],
 
-      ownerName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+      ownerName: [
+        currentUser?.name || '',
+        [Validators.required, Validators.minLength(3), Validators.maxLength(80)],
+      ],
       document: ['', [Validators.required, cpfCnpjValidator]],
       phone: ['', [Validators.required, phoneValidator]],
-      email: [{ value: 'contato@usuario.com', disabled: true }],
+      email: [{ value: currentUser?.email || '', disabled: true }],
 
       cep: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(9)]],
       state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
@@ -168,9 +176,9 @@ export class OnboardingComponent {
 
       fields.forEach((fieldName) => {
         const control = this.onboardingForm.get(fieldName);
-
         if (control?.invalid) {
           control.markAsTouched();
+
           hasError = true;
         }
       });
