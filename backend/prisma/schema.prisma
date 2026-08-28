@@ -1,7 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
   provider     = "prisma-client"
@@ -11,4 +7,69 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SuperAdminRole {
+  SUPER_ADMIN
+}
+
+model Account {
+  id             String                @id @default(uuid())
+  name           String
+  email          String                @unique
+  password       String
+  approvalStatus ApprovalStatus @default(PENDING)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  approvalRequests ApprovalRequest[]
+  store            Store?
+
+  @@map("accounts")
+}
+
+model SuperAdmin {
+  id        String         @id @default(uuid())
+  name      String
+  email     String         @unique
+  password  String
+  role      SuperAdminRole @default(SUPER_ADMIN)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  decidedApprovals ApprovalRequest[]
+
+  @@map("super_admins")
+}
+
+model ApprovalRequest {
+  id                    String         @id @default(uuid())
+  accountId             String
+  account               Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  status                ApprovalStatus @default(PENDING)
+  reason                String?
+  decidedBySuperAdminId String?
+  decidedBySuperAdmin   SuperAdmin?    @relation(fields: [decidedBySuperAdminId], references: [id])
+  decidedAt             DateTime?
+  createdAt             DateTime       @default(now())
+
+  @@map("approval_requests")
+}
+
+model Store {
+  id        String   @id @default(uuid())
+  name      String
+  accountId String   @unique
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("stores")
 }
