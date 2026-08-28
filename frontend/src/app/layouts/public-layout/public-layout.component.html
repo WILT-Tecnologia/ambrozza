@@ -1,0 +1,55 @@
+<mat-sidenav-container class="example-container bg-[#FAF6F0]" autosize>
+  <mat-sidenav #sidenav mode="over" position="start" (backdropClick)="onBackdropClick()"
+    class="w-75 bg-[#FAF6F0] border-none shadow-xl">
+
+
+    <div class="flex flex-col h-full p-5 pt-4">
+
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 rounded-full bg-[#D4768B] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            L</div>
+          <span class="font-serif text-lg font-bold text-[#3E2A22]">Doce Lelune</span>
+        </div>
+
+        <button (click)="sidenav.close()" class="text-[#8C7A70] p-1 rounded-full hover:bg-[#F2ECE4]"
+          aria-label="Fechar menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+
+      <nav class="flex flex-col gap-3 mb-8 border-b border-[#F0E6DD] pb-6">
+        @for (link of mainLinks; track link.route) {
+        <a [routerLink]="link.route" (click)="sidenav.close()"
+          routerLinkActive="bg-[#F2ECE4] font-semibold text-[#4A3830]"
+          class="px-4 py-3 rounded-lg text-[#4A3830] text-base hover:bg-[#F2ECE4] transition-colors">
+          {{ link.label }}
+        </a>
+        }
+      </nav>
+
+
+      <nav class="flex flex-col gap-2">
+        @for (link of accountLinks; track link.route) {
+        <a [routerLink]="link.route" (click)="sidenav.close()"
+          class="px-4 py-2.5 rounded-lg text-[#735E54] text-sm hover:bg-[#F2ECE4] transition-colors">
+          {{ link.label }}
+        </a>
+        }
+      </nav>
+    </div>
+  </mat-sidenav>
+
+
+  <mat-sidenav-content class="flex flex-col">
+    <app-navbar (menuClick)="sidenav.toggle()"></app-navbar>
+    <main class="flex-1 w-full m-0 p-0 bg-[#FAF6F0]">
+      <router-outlet></router-outlet>
+    </main>
+    <app-footer></app-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>

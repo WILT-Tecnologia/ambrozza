@@ -1,33 +1,55 @@
 import { Routes } from '@angular/router';
+import { onboardingGuard } from './core/guards/onboarding.guard';
+import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 
 export const routes: Routes = [
   {
     path: '',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/lading-page/home/presentation/pages/home-page/home-page.component').then(
+            (m) => m.HomePageComponent,
+          ),
+      },
+      {
+        path: 'galeria',
+        loadComponent: () =>
+          import('./features/lading-page/gallery/presentation/pages/gallery-page/gallery-page.component').then(
+            (m) => m.GalleryPageComponent,
+          ),
+      },
+      {
+        path: 'cardapio',
+        loadComponent: () =>
+          import('./features/lading-page/menu/presentation/pages/menu-page/menu-page.component').then(
+            (m) => m.MenuPageComponent,
+          ),
+      },
+      {
+        path: 'personalizar',
+        loadComponent: () =>
+          import('./features/lading-page/customize/presentation/pages/customize-page/customize-page.component').then(
+            (m) => m.CustomizePageComponent,
+          ),
+      },
+    ],
+  },
+
+  {
+    path: 'cadastrar-loja/auth',
     loadComponent: () =>
-      import('./features/home/presentation/pages/home-page/home-page.component').then(
-        (m) => m.HomePageComponent,
+      import('./features/onboarding/authentication/auth-page.component').then(
+        (m) => m.AuthPageComponent,
       ),
   },
   {
-    path: 'galeria',
+    path: 'onboarding',
+    canActivate: [onboardingGuard],
     loadComponent: () =>
-      import('./features/gallery/presentation/pages/gallery-page/gallery-page.component').then(
-        (m) => m.GalleryPageComponent,
-      ),
-  },
-  {
-    path: 'cardapio',
-    loadComponent: () =>
-      import('./features/menu/presentation/pages/menu-page/menu-page.component').then(
-        (m) => m.MenuPageComponent,
-      ),
-  },
-  {
-    path: 'personalizar',
-    loadComponent: () =>
-      import('./features/customize/presentation/pages/customize-page/customize-page.component').then(
-        (m) => m.CustomizePageComponent,
-      ),
+      import('./features/onboarding/onboarding.component').then((m) => m.OnboardingComponent),
   },
   {
     path: '**',

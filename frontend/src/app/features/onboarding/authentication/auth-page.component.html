@@ -1,0 +1,83 @@
+<div class="flex min-h-screen bg-[#F9F5EE] font-sans lg:bg-white">
+  <div class="flex-1 flex items-center justify-center p-6 sm:p-12">
+    <div class="w-full max-w-md space-y-6">
+
+      <div class="flex justify-center lg:hidden mb-2">
+        <img src="/images/icon.png" alt="Ambrozza Logo"
+          class="w-36 max-w-37.5 h-auto object-contain mix-blend-multiply select-none" />
+      </div>
+
+      <div class="space-y-2 text-center lg:text-left">
+        <h2 class="text-3xl font-bold text-[#4A2E2B]">
+          @switch (mode()) {
+          @case ('login') { Bem-vindo de volta! }
+          @case ('register') { Pronto para criar sua loja? }
+          @case ('forgot') { Recuperar Senha }
+          }
+        </h2>
+        <p class="text-sm text-[#8C7A78]">
+          @switch (mode()) {
+          @case ('login') { Acesse sua conta para gerenciar seu estabelecimento. }
+          @case ('register') { Crie sua conta para iniciar o processo de aprovação da sua doceria. }
+          @case ('forgot') { Digite seu e-mail cadastrado para receber o link de redefinição. }
+          }
+        </p>
+      </div>
+
+      <div class="relative min-h-90">
+
+
+        <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
+            'opacity-100 translate-x-0 relative z-10': mode() === 'login',
+            'opacity-0 -translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'login'
+          }">
+
+          <app-login-form (forgotPassword)="setMode('forgot')" />
+        </div>
+
+
+        <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
+            'opacity-100 translate-x-0 relative z-10': mode() === 'register',
+            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'register'
+          }">
+          <app-register-form />
+        </div>
+
+
+        <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
+            'opacity-100 translate-x-0 relative z-10': mode() === 'forgot',
+            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'forgot'
+          }">
+          <app-forgot-password-form (backToLogin)="setMode('login')" />
+        </div>
+
+      </div>
+
+      @if (mode() !== 'forgot') {
+      <div class="text-center pt-2 text-sm text-[#8C7A78]">
+        @if (mode() === 'login') {
+        Ainda não tem uma conta?
+        <button (click)="setMode('register')"
+          class="text-[#8C3A32] font-semibold underline hover:opacity-80 cursor-pointer">
+          Cadastre-se
+        </button>
+        } @else {
+        Já possui uma conta?
+        <button (click)="setMode('login')"
+          class="text-[#8C3A32] font-semibold underline hover:opacity-80 cursor-pointer">
+          Entrar
+        </button>
+        }
+      </div>
+      }
+
+    </div>
+  </div>
+
+  <div class="hidden lg:flex flex-1 bg-[#F9F5EE] items-center justify-center p-8">
+    <div class="w-full max-w-lg flex justify-center">
+      <img src="/images/icon.png" alt="Ambrozza Logo"
+        class="w-full max-w-md h-auto object-contain mix-blend-multiply select-none" />
+    </div>
+  </div>
+</div>
