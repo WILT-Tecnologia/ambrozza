@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { approvalGuard } from './core/guards/approval.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 
@@ -39,7 +40,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'cadastrar-loja/auth',
+    path: 'register-shopkeeper/auth',
     loadComponent: () =>
       import('./features/onboarding/authentication/auth-page.component').then(
         (m) => m.AuthPageComponent,
@@ -50,6 +51,21 @@ export const routes: Routes = [
     canActivate: [onboardingGuard],
     loadComponent: () =>
       import('./features/onboarding/onboarding.component').then((m) => m.OnboardingComponent),
+  },
+  {
+    path: 'approval/auth',
+    loadComponent: () =>
+      import('./features/approval/authentication/pages/login.component').then(
+        (m) => m.LoginComponent,
+      ),
+  },
+  {
+    path: 'approval-shopkeeper',
+    canActivate: [approvalGuard],
+    loadComponent: () =>
+      import('./features/approval/pages/approval/approval-requests.component').then(
+        (m) => m.ApprovalRequestsComponent,
+      ),
   },
   {
     path: '**',
