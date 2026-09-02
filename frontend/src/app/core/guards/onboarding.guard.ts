@@ -9,7 +9,7 @@ export const onboardingGuard: CanActivateFn = async () => {
   const isAuthenticated = await authService.isAuthenticated();
 
   if (!isAuthenticated) {
-    return router.createUrlTree(['/cadastrar-loja/auth']);
+    return router.createUrlTree(['/register-shopkeeper/auth']);
   }
 
   const accountStatus = await authService.getAccountStatus();
