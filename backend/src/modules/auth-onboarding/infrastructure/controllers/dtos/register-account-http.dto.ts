@@ -1,16 +1,29 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { RegisterAccountInputDto } from '../../../application/dtos/register-account.dto';
 
 export class RegisterAccountHttpDto implements RegisterAccountInputDto {
+  @Transform(({ value }) => value?.trim())
   @IsString()
-  @IsNotEmpty({ message: 'O nome é obrigatório.' })
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
   name!: string;
 
-  @IsEmail({}, { message: 'E-mail inválido.' })
-  @IsNotEmpty({ message: 'O e-mail é obrigatório.' })
+  @Transform(({ value }) => value?.trim().toLowerCase())
+  @IsEmail()
+  @IsNotEmpty()
   email!: string;
 
   @IsString()
-  @MinLength(8, { message: 'A senha deve ter no mínimo 8 caracteres.' })
+  @IsNotEmpty()
+  @MinLength(6)
+  @MaxLength(72)
   password!: string;
 }

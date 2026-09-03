@@ -5,8 +5,5 @@ export interface RegisterAccountInputDto {
 }
 
 export interface RegisterAccountOutputDto {
-  id: string;
-  name: string;
-  email: string;
-  approvalStatus: string;
+  message: string;
 }
