@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   ApprovalStatus,
+  Prisma,
   ApprovalRequest as PrismaApprovalRequestModel,
 } from '@prisma/client';
 import { PrismaService } from '../../../../prisma/prisma.service';
@@ -13,7 +14,9 @@ import { IApprovalRequestRepository } from '../../domain/repositories/approval-r
 
 @Injectable()
 export class PrismaApprovalRequestRepository implements IApprovalRequestRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService | Prisma.TransactionClient,
+  ) {}
 
   async findById(id: string): Promise<ApprovalRequest | null> {
     const record = await this.prisma.approvalRequest.findUnique({
