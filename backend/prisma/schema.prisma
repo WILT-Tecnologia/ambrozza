@@ -1,10 +1,117 @@
-
 generator client {
- provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// 1. IDENTIDADES DA PLATAFORMA
+
+model SuperAdmin {
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  password         String
+  role             SuperAdminRole    @default(SUPER_ADMIN)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  decidedApprovals ApprovalRequest[]
+
+  @@map("super_admins")
+}
+
+model Shopkeeper {
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  password         String
+  approvalStatus   ApprovalStatus    @default(PENDING)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  store            Store?
+  approvalRequests ApprovalRequest[]
+
+  @@map("shopkeepers")
+}
+
+model User {
+  id          String            @id @default(uuid())
+  name        String
+  email       String            @unique
+  password    String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  memberships StoreMembership[]
+  orders      Order[]
+
+  @@map("users")
+}
+
+// 2. SISTEMA DE APROVAÇÃO (Exclusivo para Shopkeepers)
+
+model ApprovalRequest {
+  id                    String         @id @default(uuid())
+  shopkeeperId          String
+  status                ApprovalStatus @default(PENDING)
+  reason                String?
+  decidedBySuperAdminId String?
+  decidedAt             DateTime?
+  createdAt             DateTime       @default(now())
+
+  shopkeeper          Shopkeeper  @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+  decidedBySuperAdmin SuperAdmin? @relation(fields: [decidedBySuperAdminId], references: [id])
+
+  @@map("approval_requests")
+}
+
+// 3. LOJAS E MEMBROS
+
+model Store {
+  id           String            @id @default(uuid())
+  name         String
+  slug         String            @unique
+  shopkeeperId String            @unique
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  shopkeeper  Shopkeeper        @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+  memberships StoreMembership[]
+  orders      Order[]
+
+  @@map("stores")
+}
+
+model StoreMembership {
+  id        String          @id @default(uuid())
+  userId    String
+  storeId   String
+  role      StoreMemberRole @default(CUSTOMER)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storeId])
+  @@map("store_memberships")
+}
+
+// 4. PEDIDOS (Contexto de Compras)
+
+model Order {
+  id        String      @id @default(uuid())
+  userId    String
+  storeId   String
+  status    OrderStatus @default(PENDING)
+  total     Float
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("orders")
 }
 
 
@@ -18,56 +125,16 @@ enum SuperAdminRole {
   SUPER_ADMIN
 }
 
-model Account {
-  id             String                @id @default(uuid())
-  name           String
-  email          String                @unique
-  password       String
-  approvalStatus ApprovalStatus @default(PENDING)
-  createdAt      DateTime              @default(now())
-  updatedAt      DateTime              @updatedAt
-
-  approvalRequests ApprovalRequest[]
-  store            Store?
-
-  @@map("accounts")
+enum StoreMemberRole {
+  CUSTOMER
+  STAFF
+  MANAGER
+  OWNER
 }
 
-model SuperAdmin {
-  id        String         @id @default(uuid())
-  name      String
-  email     String         @unique
-  password  String
-  role      SuperAdminRole @default(SUPER_ADMIN)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-
-  decidedApprovals ApprovalRequest[]
-
-  @@map("super_admins")
-}
-
-model ApprovalRequest {
-  id                    String         @id @default(uuid())
-  accountId             String
-  account               Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  status                ApprovalStatus @default(PENDING)
-  reason                String?
-  decidedBySuperAdminId String?
-  decidedBySuperAdmin   SuperAdmin?    @relation(fields: [decidedBySuperAdminId], references: [id])
-  decidedAt             DateTime?
-  createdAt             DateTime       @default(now())
-
-  @@map("approval_requests")
-}
-
-model Store {
-  id        String   @id @default(uuid())
-  name      String
-  accountId String   @unique
-  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("stores")
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELED
+  DELIVERED
 }

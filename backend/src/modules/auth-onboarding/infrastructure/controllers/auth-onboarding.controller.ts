@@ -7,18 +7,18 @@ import {
   Res,
 } from '@nestjs/common';
 import { type Response } from 'express';
-import { RegisterAccountUseCase } from '../../application/use-cases/register-account.use-case';
-import { RegisterAccountHttpDto } from '../controllers/dtos/register-account-http.dto';
+import { RegisterShopkeeperUseCase } from '../../application/use-cases/register-shopkeeper.use-case';
+import { RegisterShopkeeperHttpDto } from './dtos/register-shopkeeper-http.dto';
 
 @Controller('auth-onboarding')
 export class AuthOnboardingController {
   constructor(
-    private readonly registerAccountUseCase: RegisterAccountUseCase,
+    private readonly registerAccountUseCase: RegisterShopkeeperUseCase,
   ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() dto: RegisterAccountHttpDto) {
+  async register(@Body() dto: RegisterShopkeeperHttpDto) {
     const result = await this.registerAccountUseCase.execute(dto);
 
     return {

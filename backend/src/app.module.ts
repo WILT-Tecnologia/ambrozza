@@ -1,20 +1,24 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ApprovalModule } from './modules/approval/approval.module';
+import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
+import { ApprovalModule } from './modules/approval-superAdmin/approval.module';
 import { PrismaModule } from './prisma/prisma.module';
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     ThrottlerModule.forRoot([
       {
-        ttl: 60000, // Tempo em milissegundos (60 segundos)
-        limit: 5, // Máximo de 20 requisições por IP nesse período
+        ttl: 60000,
+        limit: 100,
       },
     ]),
     PrismaModule,
     ApprovalModule,
+    AdminAuthModule,
   ],
   controllers: [AppController],
   providers: [

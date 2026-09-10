@@ -1,27 +1,34 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { ApprovalModule } from '../approval/approval.module';
-import { RegisterAccountUseCase } from './application/use-cases/register-account.use-case';
+import { ApprovalModule } from '../approval-superAdmin/approval.module';
+import { RegisterShopkeeperUseCase } from './application/use-cases/register-shopkeeper.use-case';
 import { IHashServiceToken } from './domain/providers/hash.service.interface';
 
-import { IAccountRepositoryToken } from './domain/providers/repositories/account.repository.interface';
 import { AuthOnboardingController } from './infrastructure/controllers/auth-onboarding.controller';
-import { Argon2HashService } from './infrastructure/repositories/argon2-hash.service';
-import { PrismaAccountRepository } from './infrastructure/repositories/prisma-account.repository';
+
+import { IShopkeeperRepositoryToken } from './domain/providers/repositories/shopkeeper.repository.interface';
+import { IUnitOfWorkToken } from './infrastructure/repositories/interface/unit-of-work.interface';
+import { PrismaShopkeeperRepository } from './infrastructure/repositories/prisma-shopkeeper.repository';
+import { Argon2HashService } from './infrastructure/repositories/service/argon2-hash.service';
+import { PrismaUnitOfWork } from './infrastructure/transactions/prisma-unit-of-work';
 
 @Module({
   imports: [forwardRef(() => ApprovalModule)],
   controllers: [AuthOnboardingController],
   providers: [
-    RegisterAccountUseCase,
+    RegisterShopkeeperUseCase,
     {
-      provide: IAccountRepositoryToken,
-      useClass: PrismaAccountRepository,
+      provide: IShopkeeperRepositoryToken,
+      useClass: PrismaShopkeeperRepository,
     },
     {
       provide: IHashServiceToken,
       useClass: Argon2HashService,
     },
+    {
+      provide: IUnitOfWorkToken,
+      useClass: PrismaUnitOfWork,
+    },
   ],
-  exports: [RegisterAccountUseCase, IAccountRepositoryToken],
+  exports: [RegisterShopkeeperUseCase, IShopkeeperRepositoryToken],
 })
 export class AuthModule {}
