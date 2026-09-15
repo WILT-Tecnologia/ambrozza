@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
-
+import { AuthService } from './core/services/admin-auth.service';
 @Component({
   selector: 'app-root',
   imports: [CommonModule, RouterOutlet, MatSidenavModule],
@@ -12,7 +11,7 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  private readonly http = inject(HttpClient);
+  private authService = inject(AuthService);
 
   protected readonly title = signal('frontend');
   protected readonly apiStatus = signal<'checking' | 'online' | 'offline'>('checking');
@@ -31,13 +30,7 @@ export class App implements OnInit {
     { label: 'Painel administrativo', route: '/admin' },
   ];
 
-  ngOnInit(): void {
-    this.http.get('/api', { responseType: 'text' }).subscribe({
-      next: () => this.apiStatus.set('online'),
-      error: () => this.apiStatus.set('offline'),
-    });
-  }
-
+  async ngOnInit(): Promise<void> {}
   toggleSidenav() {
     this.sidenav.toggle();
   }

@@ -1,10 +1,10 @@
-export interface RegisterAccountInputDto {
+export interface RegisterShopkeeperInputDto {
   name: string;
   email: string;
   password: string;
 }
 
-export interface RegisterAccountOutputDto {
+export interface RegisterShopkeeperOutputDto {
   id: string;
   name: string;
   email: string;

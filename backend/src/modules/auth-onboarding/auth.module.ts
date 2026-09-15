@@ -6,10 +6,11 @@ import { IHashServiceToken } from './domain/providers/hash.service.interface';
 import { AuthOnboardingController } from './infrastructure/controllers/auth-onboarding.controller';
 
 import { IShopkeeperRepositoryToken } from './domain/providers/repositories/shopkeeper.repository.interface';
-import { IUnitOfWorkToken } from './infrastructure/repositories/interface/unit-of-work.interface';
+
+import { PrismaUnitOfWork } from 'src/shared/infrastructure/database/unit-of-work/prisma-unit-of-work';
+import { IUnitOfWorkToken } from 'src/shared/infrastructure/database/unit-of-work/unit-of-work.interface';
 import { PrismaShopkeeperRepository } from './infrastructure/repositories/prisma-shopkeeper.repository';
 import { Argon2HashService } from './infrastructure/repositories/service/argon2-hash.service';
-import { PrismaUnitOfWork } from './infrastructure/transactions/prisma-unit-of-work';
 
 @Module({
   imports: [forwardRef(() => ApprovalModule)],

@@ -8,10 +8,11 @@ import {
   type IShopkeeperRepository,
   IShopkeeperRepositoryToken,
 } from '../../domain/providers/repositories/shopkeeper.repository.interface';
+
 import {
-  type IUnitOfWork,
+  IUnitOfWork,
   IUnitOfWorkToken,
-} from '../../infrastructure/repositories/interface/unit-of-work.interface';
+} from 'src/shared/infrastructure/database/unit-of-work/unit-of-work.interface';
 import type {
   RegisterShopkeeperInputDto,
   RegisterShopkeeperOutputDto,

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ApprovalRequest {
   id: string;
@@ -12,7 +13,6 @@ export interface ApprovalRequest {
 export interface DecideApprovalPayload {
   approvalRequestId: string;
   action: 'APPROVE' | 'REJECT';
-  superAdminId: string;
   reason?: string;
 }
 
@@ -21,13 +21,14 @@ export interface DecideApprovalPayload {
 })
 export class ApprovalService {
   private http = inject(HttpClient);
-  private readonly apiUrl = '/api/approvals';
+
+  private readonly apiUrl = `${environment.apiUrl}/approval`;
 
   getPendingRequests(): Observable<ApprovalRequest[]> {
-    return this.http.get<ApprovalRequest[]>(`${this.apiUrl}?status=PENDING`);
+    return this.http.get<ApprovalRequest[]>(`${this.apiUrl}/pending`, { withCredentials: true });
   }
 
   decide(payload: DecideApprovalPayload): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/decide`, payload);
+    return this.http.post<void>(`${this.apiUrl}/decide`, payload, { withCredentials: true });
   }
 }

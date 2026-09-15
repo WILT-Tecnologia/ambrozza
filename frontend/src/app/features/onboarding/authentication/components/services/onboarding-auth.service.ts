@@ -3,7 +3,10 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../../../../environments/environment';
-import { RegisterAccountInputDto, RegisterAccountOutputDto } from '../../dtos/register-account.dto';
+import {
+  RegisterShopkeeperInputDto,
+  RegisterShopkeeperOutputDto,
+} from '../../dtos/register-shopkeeper.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +17,8 @@ export class OnboardingAuthService {
 
   private accessToken: string | null = null;
 
-  register(dto: RegisterAccountInputDto): Observable<RegisterAccountOutputDto> {
-    return this.http.post<RegisterAccountOutputDto>(`${this.apiUrl}/register`, dto);
+  register(dto: RegisterShopkeeperInputDto): Observable<RegisterShopkeeperOutputDto> {
+    return this.http.post<RegisterShopkeeperOutputDto>(`${this.apiUrl}/register`, dto);
   }
 
   setAccessToken(token: string): void {

@@ -1,6 +1,5 @@
 export interface DecideApprovalInputDto {
   approvalRequestId: string;
-  superAdminId: string;
   action: 'APPROVE' | 'REJECT';
   reason?: string;
 }

@@ -39,8 +39,6 @@ async function main() {
       role: SuperAdminRole.SUPER_ADMIN,
     },
   });
-
-  console.log(`Super Admin criado/encontrado: ${superAdmin.email}`);
 }
 
 main()

@@ -1,13 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  type IShopkeeperRepository,
-  IShopkeeperRepositoryToken,
-} from 'src/modules/auth-onboarding/domain/providers/repositories/shopkeeper.repository.interface';
-import {
-  type IApprovalRequestRepository,
-  IApprovalRequestRepositoryToken,
-} from '../../domain/repositories/approval-request.repository.interface';
+  IUnitOfWork,
+  IUnitOfWorkToken,
+} from 'src/shared/infrastructure/database/unit-of-work/unit-of-work.interface';
 import {
   DecideApprovalInputDto,
   DecideApprovalOutputDto,
@@ -16,42 +12,48 @@ import {
 @Injectable()
 export class DecideApprovalUseCase {
   constructor(
-    @Inject(IApprovalRequestRepositoryToken)
-    private readonly approvalRequestRepository: IApprovalRequestRepository,
-    @Inject(IShopkeeperRepositoryToken)
-    private readonly accountRepository: IShopkeeperRepository,
+    @Inject(IUnitOfWorkToken)
+    private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(
     input: DecideApprovalInputDto,
+    superAdminId: string,
   ): Promise<DecideApprovalOutputDto> {
-    const request = await this.approvalRequestRepository.findById(
-      input.approvalRequestId,
+    return this.unitOfWork.execute(
+      async (accountRepository, approvalRequestRepository) => {
+        const request = await approvalRequestRepository.findById(
+          input.approvalRequestId,
+        );
+
+        if (!request) {
+          throw new Error('Solicitação de aprovação não encontrada.');
+        }
+
+        if (input.action === 'APPROVE') {
+          request.approve(superAdminId);
+        } else {
+          if (!input.reason || !input.reason.trim()) {
+            throw new Error('Motivo é obrigatório para rejeição.');
+          }
+
+          request.reject(superAdminId, input.reason.trim());
+        }
+
+        await approvalRequestRepository.save(request);
+
+        await accountRepository.updateApprovalStatus(
+          request.shopkeeperId,
+          request.status,
+        );
+
+        return {
+          approvalRequestId: request.id!,
+          accountId: request.shopkeeperId,
+          status: request.status,
+          decidedAt: request.decidedAt!,
+        };
+      },
     );
-    if (!request) {
-      throw new Error('Solicitação de aprovação não encontrada.');
-    }
-
-    if (input.action === 'APPROVE') {
-      request.approve(input.superAdminId);
-    } else {
-      if (!input.reason) {
-        throw new Error('Motivo é obrigatório para rejeição.');
-      }
-      request.reject(input.superAdminId, input.reason);
-    }
-
-    await this.approvalRequestRepository.save(request);
-    await this.accountRepository.updateApprovalStatus(
-      request.shopkeeperId,
-      request.status,
-    );
-
-    return {
-      approvalRequestId: request.id!,
-      accountId: request.shopkeeperId,
-      status: request.status,
-      decidedAt: request.decidedAt!,
-    };
   }
 }

@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../../../prisma/prisma.service';
 
-import { PrismaShopkeeperRepository } from '../repositories/prisma-shopkeeper.repository';
-
 import { PrismaApprovalRequestRepository } from 'src/modules/approval-superAdmin/infrastructure/repositories/prisma-administration-request.repository';
-import { IUnitOfWork } from '../repositories/interface/unit-of-work.interface';
+import { PrismaShopkeeperRepository } from 'src/modules/auth-onboarding/infrastructure/repositories/prisma-shopkeeper.repository';
+import { IUnitOfWork } from './unit-of-work.interface';
 
 @Injectable()
 export class PrismaUnitOfWork implements IUnitOfWork {

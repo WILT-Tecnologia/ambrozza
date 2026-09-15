@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { approvalGuard } from './core/guards/approval.guard';
+import { guestAdminGuard } from './core/guards/guestAdmin.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 
@@ -54,8 +55,9 @@ export const routes: Routes = [
   },
   {
     path: 'approval/auth',
+    canActivate: [guestAdminGuard],
     loadComponent: () =>
-      import('./features/approval/authentication/pages/login.component').then(
+      import('./features/adminRouter/pages/authentication/login.component').then(
         (m) => m.LoginComponent,
       ),
   },
@@ -63,7 +65,7 @@ export const routes: Routes = [
     path: 'approval-shopkeeper',
     canActivate: [approvalGuard],
     loadComponent: () =>
-      import('./features/approval/pages/approval/approval-requests.component').then(
+      import('./features/adminRouter/pages/approval/approval-requests.component').then(
         (m) => m.ApprovalRequestsComponent,
       ),
   },

@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/admin-auth.service';
-
+import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/admin-auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -14,6 +13,7 @@ import { AuthService } from '../../services/admin-auth.service';
       >
         <div class="text-center space-y-2">
           <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Painel Administrativo</h1>
+
           <p class="text-sm text-slate-500">
             Entre com suas credenciais de Super Admin para continuar.
           </p>
@@ -21,9 +21,10 @@ import { AuthService } from '../../services/admin-auth.service';
 
         <form (ngSubmit)="handleLogin()" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2"
-              >E-mail</label
-            >
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+              E-mail
+            </label>
+
             <input
               type="email"
               [(ngModel)]="email"
@@ -35,9 +36,10 @@ import { AuthService } from '../../services/admin-auth.service';
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2"
-              >Senha</label
-            >
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+              Senha
+            </label>
+
             <input
               type="password"
               [(ngModel)]="password"
@@ -56,7 +58,7 @@ import { AuthService } from '../../services/admin-auth.service';
 
           <button
             type="submit"
-            class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
+            class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-750 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
           >
             Entrar
           </button>
@@ -66,9 +68,8 @@ import { AuthService } from '../../services/admin-auth.service';
   `,
 })
 export class LoginComponent {
-  private http = inject(HttpClient);
   private authService = inject(AuthService);
-
+  private router = inject(Router);
   email = '';
   password = '';
   errorMessage = '';
@@ -81,12 +82,12 @@ export class LoginComponent {
       return;
     }
 
-    const payload = { email: this.email, password: this.password };
-
-    this.http.post<{ token: string }>('/api/auth/login', payload).subscribe({
+    this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
-        this.authService.login(res.token);
+        this.authService.setAccessToken(res.accessToken);
+        this.router.navigate(['/approval-shopkeeper']);
       },
+
       error: (err) => {
         this.errorMessage = err.error?.message || 'Credenciais inválidas.';
       },

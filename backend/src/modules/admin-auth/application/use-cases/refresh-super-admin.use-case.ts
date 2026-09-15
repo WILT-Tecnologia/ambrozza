@@ -24,7 +24,6 @@ export class RefreshSuperUserTokenUseCase {
   constructor(
     @Inject(ISuperUserRepositoryToken)
     private readonly superUserRepository: ISuperUserRepository,
-
     @Inject(ITokenServiceToken)
     private readonly tokenService: ITokenService,
   ) {}
