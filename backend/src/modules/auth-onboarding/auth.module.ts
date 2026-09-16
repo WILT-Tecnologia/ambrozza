@@ -9,8 +9,8 @@ import { IShopkeeperRepositoryToken } from './domain/providers/repositories/shop
 
 import { PrismaUnitOfWork } from 'src/shared/infrastructure/database/unit-of-work/prisma-unit-of-work';
 import { IUnitOfWorkToken } from 'src/shared/infrastructure/database/unit-of-work/unit-of-work.interface';
+import { Argon2HashService } from '../service/argon2-hash.service';
 import { PrismaShopkeeperRepository } from './infrastructure/repositories/prisma-shopkeeper.repository';
-import { Argon2HashService } from './infrastructure/repositories/service/argon2-hash.service';
 
 @Module({
   imports: [forwardRef(() => ApprovalModule)],

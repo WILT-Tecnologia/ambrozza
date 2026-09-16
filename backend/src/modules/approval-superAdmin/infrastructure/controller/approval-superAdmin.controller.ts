@@ -1,10 +1,30 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+
 import { Request } from 'express';
+
 import { DecideApprovalInputDto } from '../../application/dtos/decide-approval.dto';
 import { DecideApprovalUseCase } from '../../application/use-cases/decide-approval.use-case';
 import { GetPendingApprovalsUseCase } from '../../application/use-cases/get-pending-approvals.use-case';
 
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+
+interface AuthenticatedRequest extends Request {
+  user: {
+    sub: string;
+    email: string;
+  };
+}
+
 @Controller('approval')
+@UseGuards(JwtAuthGuard)
 export class ApprovalController {
   constructor(
     private readonly decideApprovalUseCase: DecideApprovalUseCase,
@@ -25,7 +45,10 @@ export class ApprovalController {
   }
 
   @Post('decide')
-  async decide(@Body() input: DecideApprovalInputDto, @Req() request: Request) {
+  async decide(
+    @Body() input: DecideApprovalInputDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
     return this.decideApprovalUseCase.execute(input, request.user.sub);
   }
 }

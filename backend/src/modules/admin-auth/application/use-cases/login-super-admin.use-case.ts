@@ -22,7 +22,7 @@ export class LoginSuperUserUseCase {
     private readonly superUserRepository: ISuperUserRepository,
     @Inject(IHashServiceToken)
     private readonly hashService: IHashService,
-    // Injetamos a nossa interface de tokens ao invés do JwtService cru
+
     @Inject(ITokenServiceToken)
     private readonly tokenService: ITokenService,
   ) {}
@@ -33,16 +33,20 @@ export class LoginSuperUserUseCase {
     const email = input.email.trim().toLowerCase();
 
     const superUser = await this.superUserRepository.findByEmail(email);
-    if (!superUser) {
-      throw new UnauthorizedException('E-mail ou senha inválidos.');
+
+    const passwordHash =
+      superUser?.passwordHash ?? process.env.AUTH_DUMMY_PASSWORD_HASH;
+
+    if (!passwordHash) {
+      throw new Error('AUTH_DUMMY_PASSWORD_HASH não configurado.');
     }
 
     const isPasswordValid = await this.hashService.compare(
       input.password,
-      superUser.passwordHash,
+      passwordHash,
     );
 
-    if (!isPasswordValid) {
+    if (!superUser || !isPasswordValid) {
       throw new UnauthorizedException('E-mail ou senha inválidos.');
     }
 
@@ -51,13 +55,12 @@ export class LoginSuperUserUseCase {
       email: superUser.email,
     };
 
-    // Usando o nosso adaptador de tokens para gerar ambos (Access e Refresh)
     const accessToken = this.tokenService.generateAccessToken(payload);
     const refreshToken = this.tokenService.generateRefreshToken(payload);
 
     return {
       accessToken,
-      refreshToken, // Retorna para o controller salvar no cookie HttpOnly
+      refreshToken,
       superUser: {
         id: superUser.id,
         email: superUser.email,
