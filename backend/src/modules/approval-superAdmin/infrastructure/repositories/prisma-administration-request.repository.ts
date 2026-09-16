@@ -10,7 +10,12 @@ import {
   ApprovalRequest,
   ApprovalStatusType,
 } from '../../domain/entities/administration-request.entity';
-import { IApprovalRequestRepository } from '../../domain/repositories/approval-request.repository.interface';
+import {
+  ApprovalRequestListItem,
+  FindPaginatedByStatusParams,
+  IApprovalRequestRepository,
+  PaginatedResult,
+} from '../../domain/repositories/approval-request.repository.interface';
 
 @Injectable()
 export class PrismaApprovalRequestRepository implements IApprovalRequestRepository {
@@ -60,6 +65,50 @@ export class PrismaApprovalRequestRepository implements IApprovalRequestReposito
     return records.map((record: PrismaApprovalRequestModel) =>
       this.mapToDomain(record),
     );
+  }
+
+  async findPaginatedByStatus(
+    status: ApprovalStatusType,
+    { page, limit, search }: FindPaginatedByStatusParams,
+  ): Promise<PaginatedResult<ApprovalRequestListItem>> {
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.ApprovalRequestWhereInput = {
+      status: status as unknown as ApprovalStatus,
+      ...(search && {
+        shopkeeper: {
+          is: {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' } },
+              { email: { contains: search, mode: 'insensitive' } },
+            ],
+          },
+        },
+      }),
+    };
+
+    const [records, total] = await Promise.all([
+      this.prisma.approvalRequest.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        include: { shopkeeper: { select: { name: true, email: true } } },
+      }),
+      this.prisma.approvalRequest.count({ where }),
+    ]);
+
+    return {
+      data: records.map((record) => ({
+        id: record.id,
+        shopkeeperId: record.shopkeeperId,
+        shopkeeperName: record.shopkeeper.name,
+        shopkeeperEmail: record.shopkeeper.email,
+        status: record.status as unknown as ApprovalStatusType,
+        createdAt: record.createdAt,
+      })),
+      total,
+    };
   }
 
   private mapToDomain(record: PrismaApprovalRequestModel): ApprovalRequest {

@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/admin-auth.service';
@@ -9,125 +10,205 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
 @Component({
   selector: 'app-approval-requests',
   standalone: true,
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, MatIconModule],
   template: `
-    <div class="min-h-screen bg-slate-50 p-6 font-sans">
-      <div class="max-w-6xl mx-auto space-y-6">
+    <div class="h-screen flex flex-col overflow-hidden bg-[#F9F5EE] p-6 font-sans">
+      <div class="max-w-6xl w-full mx-auto h-full flex flex-col min-h-0 gap-5">
+        <!-- Cabeçalho -->
         <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm"
+          class="shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-[#76432F]/15"
         >
           <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Aprovação de Lojistas</h1>
-            <p class="text-sm text-slate-500 mt-1">
-              Gerencie e analise os pedidos de novos estabelecimentos na plataforma.
+            <h1 class="text-2xl font-semibold text-[#5A331F] tracking-tight">
+              Aprovação de Lojistas
+            </h1>
+            <p class="text-sm text-[#76432F]/70 mt-1">
+              @if (!isLoading) {
+                {{ total }} {{ total === 1 ? 'solicitação pendente' : 'solicitações pendentes' }}
+                @if (isSearchActive) {
+                  para "{{ appliedSearchTerm }}"
+                }
+              } @else {
+                Carregando solicitações...
+              }
             </p>
           </div>
-
-          @if (!isLoading) {
-            <div
-              class="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-full"
-            >
-              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-              {{ requests.length }} Solicitações Pendentes
-            </div>
-          }
 
           <button
             type="button"
             (click)="logout()"
-            class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-sm font-medium rounded-lg transition-colors"
+            class="inline-flex items-center gap-1.5 px-4 py-2 border border-[#76432F]/30 text-[#76432F] text-sm font-medium rounded-md hover:bg-[#76432F]/5 transition-colors"
           >
+            <mat-icon class="icon-sm">logout</mat-icon>
             Sair
           </button>
         </div>
 
-        @if (isLoading) {
-          <div class="grid gap-4">
-            @for (i of [1, 2, 3]; track i) {
-              <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm animate-pulse">
-                <div class="h-4 bg-slate-200 rounded w-1/4 mb-3"></div>
-                <div class="h-3 bg-slate-100 rounded w-1/3"></div>
-              </div>
-            }
+        <!-- Busca -->
+        <div class="shrink-0 flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1 sm:max-w-sm">
+            <mat-icon class="icon-sm absolute left-2.5 top-1/2 -translate-y-1/2 text-[#76432F]/40">
+              search
+            </mat-icon>
+            <input
+              type="text"
+              placeholder="Buscar por nome ou e-mail"
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="handleSearch()"
+              class="w-full text-sm border border-[#76432F]/25 rounded-md pl-9 pr-3 py-2.5 bg-white text-[#3D241A] placeholder:text-[#76432F]/40 outline-none focus:border-[#76432F] focus:ring-1 focus:ring-[#76432F]/40"
+            />
           </div>
-        } @else {
-          @if (requests.length === 0) {
-            <div class="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-sm">
-              <h3 class="text-base font-semibold text-slate-800">Tudo em dia!</h3>
-              <p class="text-sm text-slate-500 mt-1">
-                Não há nenhuma solicitação de cadastro pendente no momento.
-              </p>
-            </div>
-          }
 
-          @if (requests.length > 0) {
-            <div class="grid gap-4">
-              @for (req of requests; track req.id) {
-                <div
-                  class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:border-slate-300 transition-all duration-200"
-                >
-                  <div
-                    class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4"
-                  >
-                    <div class="space-y-1">
-                      <div class="flex items-center gap-2">
-                        <span
-                          class="text-xs font-mono font-medium bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded border border-slate-200"
-                        >
-                          ID: {{ req.accountId }}
-                        </span>
-                        <span
-                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800"
-                        >
-                          Pendente
-                        </span>
-                      </div>
-                      <p class="text-xs text-slate-400">
-                        Solicitado em:
-                        <span class="font-medium text-slate-600">{{
-                          req.createdAt | date: 'dd/MM/yyyy - HH:mm'
-                        }}</span>
-                      </p>
-                    </div>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              (click)="handleSearch()"
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#76432F] hover:bg-[#5F3625] text-white text-sm font-medium rounded-md transition-colors"
+            >
+              <mat-icon class="icon-sm">search</mat-icon>
+              Buscar
+            </button>
+            <button
+              type="button"
+              [disabled]="!isSearchActive"
+              (click)="handleClear()"
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 border border-[#76432F]/30 text-[#76432F] text-sm font-medium rounded-md hover:bg-[#76432F]/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              <mat-icon class="icon-sm">close</mat-icon>
+              Limpar
+            </button>
+          </div>
+        </div>
 
-                    <div
-                      class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
-                    >
-                      <input
-                        type="text"
-                        placeholder="Motivo (obrigatório para rejeitar)"
-                        [(ngModel)]="reasons[req.id]"
-                        class="text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none w-full sm:w-64 placeholder:text-slate-400"
-                      />
-
-                      <div class="flex items-center gap-2">
-                        <button
-                          type="button"
-                          [disabled]="processingRequests.has(req.id)"
-                          (click)="handleDecide(req.id, 'APPROVE')"
-                          class="flex-1 sm:flex-none px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors duration-150 shadow-sm"
-                        >
-                          {{ processingRequests.has(req.id) ? 'Processando...' : 'Aprovar' }}
-                        </button>
-                        <button
-                          type="button"
-                          [disabled]="processingRequests.has(req.id)"
-                          (click)="handleDecide(req.id, 'REJECT')"
-                          class="flex-1 sm:flex-none px-4 py-2 bg-white hover:bg-rose-50 disabled:opacity-50 disabled:cursor-not-allowed text-rose-600 border border-rose-200 hover:border-rose-300 text-sm font-medium rounded-lg transition-colors duration-150"
-                        >
-                          {{ processingRequests.has(req.id) ? 'Processando...' : 'Rejeitar' }}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <!-- Tabela: ocupa o espaço restante e rola internamente -->
+        <div
+          class="flex-1 min-h-0 flex flex-col bg-white border border-[#76432F]/12 rounded-md overflow-hidden"
+        >
+          @if (isLoading) {
+            <div class="p-6 space-y-3 overflow-y-auto">
+              @for (i of [1, 2, 3, 4, 5]; track i) {
+                <div class="h-10 bg-[#76432F]/8 rounded animate-pulse"></div>
               }
             </div>
+          } @else {
+            @if (requests.length === 0) {
+              <div class="flex-1 flex flex-col items-center justify-center text-center p-10">
+                <mat-icon class="text-[#76432F]/30 !w-10 !h-10 !text-[40px] mb-2">inbox</mat-icon>
+                <h3 class="text-base font-semibold text-[#5A331F]">Nenhum resultado</h3>
+                <p class="text-sm text-[#76432F]/60 mt-1">
+                  @if (isSearchActive) {
+                    Nenhuma solicitação encontrada para "{{ appliedSearchTerm }}".
+                  } @else {
+                    Não há solicitações pendentes no momento.
+                  }
+                </p>
+              </div>
+            } @else {
+              <div class="flex-1 min-h-0 overflow-y-auto">
+                <table class="w-full text-sm">
+                  <thead
+                    class="sticky top-0 z-10 bg-[#F9F5EE] border-b border-[#76432F]/15 text-left text-[#76432F]"
+                  >
+                    <tr>
+                      <th class="px-4 py-3 font-semibold">Lojista</th>
+                      <th class="px-4 py-3 font-semibold">Solicitado em</th>
+                      <th class="px-4 py-3 font-semibold">Motivo (se rejeitar)</th>
+                      <th class="px-4 py-3 font-semibold text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-[#76432F]/8">
+                    @for (req of requests; track req.id) {
+                      <tr class="hover:bg-[#F9F5EE]/60 transition-colors">
+                        <td class="px-4 py-3">
+                          <div class="font-medium text-[#3D241A]">{{ req.shopkeeperName }}</div>
+                          <div class="text-xs text-[#76432F]/60">{{ req.shopkeeperEmail }}</div>
+                        </td>
+                        <td class="px-4 py-3 text-[#76432F]/70">
+                          {{ req.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+                        </td>
+                        <td class="px-4 py-3">
+                          <input
+                            type="text"
+                            placeholder="Motivo..."
+                            [(ngModel)]="reasons[req.id]"
+                            class="text-xs border border-[#76432F]/20 rounded px-2 py-1.5 w-full max-w-xs outline-none focus:border-[#76432F] focus:ring-1 focus:ring-[#76432F]/30"
+                          />
+                        </td>
+                        <td class="px-4 py-3 text-right space-x-2 whitespace-nowrap">
+                          <button
+                            type="button"
+                            [disabled]="processingRequests.has(req.id)"
+                            (click)="handleDecide(req.id, 'APPROVE')"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+                          >
+                            <mat-icon class="icon-xs">check</mat-icon>
+                            {{ processingRequests.has(req.id) ? '...' : 'Aprovar' }}
+                          </button>
+                          <button
+                            type="button"
+                            [disabled]="processingRequests.has(req.id)"
+                            (click)="handleDecide(req.id, 'REJECT')"
+                            class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#D87D76] hover:bg-[#C96B64] disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+                          >
+                            <mat-icon class="icon-xs">close</mat-icon>
+                            {{ processingRequests.has(req.id) ? '...' : 'Rejeitar' }}
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
           }
+        </div>
+
+        <!-- Paginação -->
+        @if (!isLoading && totalPages > 1) {
+          <div class="shrink-0 flex items-center justify-between px-1">
+            <span class="text-xs text-[#76432F]/70">Página {{ page }} de {{ totalPages }}</span>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                [disabled]="page <= 1"
+                (click)="goToPage(page - 1)"
+                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-[#76432F]/25 text-[#76432F] rounded-md disabled:opacity-40 hover:bg-[#76432F]/5 transition-colors"
+              >
+                <mat-icon class="icon-xs">chevron_left</mat-icon>
+                Anterior
+              </button>
+              <button
+                type="button"
+                [disabled]="page >= totalPages"
+                (click)="goToPage(page + 1)"
+                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-[#76432F]/25 text-[#76432F] rounded-md disabled:opacity-40 hover:bg-[#76432F]/5 transition-colors"
+              >
+                Próxima
+                <mat-icon class="icon-xs">chevron_right</mat-icon>
+              </button>
+            </div>
+          </div>
         }
       </div>
     </div>
   `,
+  styles: [
+    `
+      /* Tamanhos de ícone consistentes com o texto ao redor dos botões */
+      .icon-sm {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+        line-height: 18px;
+      }
+      .icon-xs {
+        width: 14px;
+        height: 14px;
+        font-size: 14px;
+        line-height: 14px;
+      }
+    `,
+  ],
 })
 export class ApprovalRequestsComponent implements OnInit {
   private approvalService = inject(ApprovalService);
@@ -138,27 +219,66 @@ export class ApprovalRequestsComponent implements OnInit {
   requests: ApprovalRequest[] = [];
   reasons: Record<string, string> = {};
   processingRequests = new Set<string>();
+
   isLoading = true;
+  page = 1;
+  limit = 20;
+  total = 0;
+  totalPages = 0;
+
+  /** Valor digitado no input, ainda não necessariamente pesquisado. */
+  searchTerm = '';
+  /** Termo efetivamente aplicado na última busca (usado nas mensagens da tela). */
+  appliedSearchTerm = '';
+  /** Indica se a lista atual está filtrada por uma busca. */
+  isSearchActive = false;
 
   ngOnInit(): void {
+    this.loadRequests();
+  }
+
+  /** Dispara a busca somente quando o usuário clica em "Buscar" (ou aperta Enter). */
+  handleSearch(): void {
+    const term = this.searchTerm.trim();
+    this.appliedSearchTerm = term;
+    this.isSearchActive = term.length > 0;
+    this.page = 1;
+    this.loadRequests();
+  }
+
+  /** Limpa a busca e volta a exibir todos os itens da página. */
+  handleClear(): void {
+    this.searchTerm = '';
+    this.appliedSearchTerm = '';
+    this.isSearchActive = false;
+    this.page = 1;
+    this.loadRequests();
+  }
+
+  goToPage(newPage: number): void {
+    this.page = newPage;
     this.loadRequests();
   }
 
   loadRequests(): void {
     this.isLoading = true;
 
-    this.approvalService.getPendingRequests().subscribe({
-      next: (data) => {
-        this.requests = data;
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erro ao carregar solicitações', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-    });
+    this.approvalService
+      .getPendingRequests(this.page, this.limit, this.appliedSearchTerm)
+      .subscribe({
+        next: (res) => {
+          this.requests = res.data;
+          this.total = res.total;
+          this.totalPages = res.totalPages;
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Erro ao carregar solicitações', err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   handleDecide(approvalRequestId: string, action: 'APPROVE' | 'REJECT'): void {
@@ -183,6 +303,7 @@ export class ApprovalRequestsComponent implements OnInit {
     this.approvalService.decide(payload).subscribe({
       next: () => {
         this.requests = this.requests.filter((r) => r.id !== approvalRequestId);
+        this.total -= 1;
       },
       error: (err) => alert(`Erro: ${err.error?.message || 'Falha ao processar'}`),
     });

@@ -5,6 +5,12 @@ import {
   IApprovalRequestRepositoryToken,
 } from '../../domain/repositories/approval-request.repository.interface';
 
+interface Params {
+  page: number;
+  limit: number;
+  search?: string;
+}
+
 @Injectable()
 export class GetPendingApprovalsUseCase {
   constructor(
@@ -12,15 +18,20 @@ export class GetPendingApprovalsUseCase {
     private readonly approvalRequestRepository: IApprovalRequestRepository,
   ) {}
 
-  async execute() {
-    const requests =
-      await this.approvalRequestRepository.findAllByStatus('PENDING');
+  async execute({ page, limit, search }: Params) {
+    const { data, total } =
+      await this.approvalRequestRepository.findPaginatedByStatus('PENDING', {
+        page,
+        limit,
+        search,
+      });
 
-    return requests.map((request) => ({
-      id: request.id!,
-      accountId: request.shopkeeperId,
-      status: request.status,
-      createdAt: request.createdAt,
-    }));
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
