@@ -42,9 +42,12 @@ export class PrismaApprovalRequestRepository implements IApprovalRequestReposito
     return this.mapToDomain(record);
   }
 
-  async save(request: ApprovalRequest): Promise<void> {
-    await this.prisma.approvalRequest.update({
-      where: { id: request.id },
+  async save(request: ApprovalRequest): Promise<boolean> {
+    const result = await this.prisma.approvalRequest.updateMany({
+      where: {
+        id: request.id,
+        status: ApprovalStatus.PENDING,
+      },
       data: {
         status: request.status as unknown as ApprovalStatus,
         reason: request.reason,
@@ -52,6 +55,8 @@ export class PrismaApprovalRequestRepository implements IApprovalRequestReposito
         decidedAt: request.decidedAt,
       },
     });
+
+    return result.count === 1;
   }
 
   async findAllByStatus(

@@ -26,9 +26,8 @@ export interface FindPaginatedByStatusParams {
 export interface IApprovalRequestRepository {
   findById(id: string): Promise<ApprovalRequest | null>;
   create(request: ApprovalRequest): Promise<ApprovalRequest>;
-  save(request: ApprovalRequest): Promise<void>;
+  save(request: ApprovalRequest): Promise<boolean>;
   findAllByStatus(status: ApprovalStatusType): Promise<ApprovalRequest[]>;
-
   findPaginatedByStatus(
     status: ApprovalStatusType,
     params: FindPaginatedByStatusParams,

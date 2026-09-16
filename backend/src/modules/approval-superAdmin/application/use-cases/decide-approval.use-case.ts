@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 
 import {
   IUnitOfWork,
@@ -40,7 +40,13 @@ export class DecideApprovalUseCase {
           request.reject(superAdminId, input.reason.trim());
         }
 
-        await approvalRequestRepository.save(request);
+        const saved = await approvalRequestRepository.save(request);
+
+        if (!saved) {
+          throw new ConflictException(
+            'Esta solicitação já foi processada por outro administrador.',
+          );
+        }
 
         await accountRepository.updateApprovalStatus(
           request.shopkeeperId,
