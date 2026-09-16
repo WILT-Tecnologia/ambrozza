@@ -3,6 +3,8 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
+import Swal from 'sweetalert2';
 
 import { AuthService } from '../../../../core/services/admin-auth.service';
 import { ApprovalRequest, ApprovalService } from '../../../../core/services/approval.service';
@@ -14,7 +16,6 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
   template: `
     <div class="h-screen flex flex-col overflow-hidden bg-[#F9F5EE] p-6 font-sans">
       <div class="max-w-6xl w-full mx-auto h-full flex flex-col min-h-0 gap-5">
-        <!-- Cabeçalho -->
         <div
           class="shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-[#76432F]/15"
         >
@@ -22,9 +23,12 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
             <h1 class="text-2xl font-semibold text-[#5A331F] tracking-tight">
               Aprovação de Lojistas
             </h1>
+
             <p class="text-sm text-[#76432F]/70 mt-1">
               @if (!isLoading) {
-                {{ total }} {{ total === 1 ? 'solicitação pendente' : 'solicitações pendentes' }}
+                {{ total }}
+                {{ total === 1 ? 'solicitação pendente' : 'solicitações pendentes' }}
+
                 @if (isSearchActive) {
                   para "{{ appliedSearchTerm }}"
                 }
@@ -44,12 +48,12 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
           </button>
         </div>
 
-        <!-- Busca -->
         <div class="shrink-0 flex flex-col sm:flex-row gap-3">
           <div class="relative flex-1 sm:max-w-sm">
             <mat-icon class="icon-sm absolute left-2.5 top-1/2 -translate-y-1/2 text-[#76432F]/40">
               search
             </mat-icon>
+
             <input
               type="text"
               placeholder="Buscar por nome ou e-mail"
@@ -68,6 +72,7 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
               <mat-icon class="icon-sm">search</mat-icon>
               Buscar
             </button>
+
             <button
               type="button"
               [disabled]="!isSearchActive"
@@ -80,7 +85,6 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
           </div>
         </div>
 
-        <!-- Tabela: ocupa o espaço restante e rola internamente -->
         <div
           class="flex-1 min-h-0 flex flex-col bg-white border border-[#76432F]/12 rounded-md overflow-hidden"
         >
@@ -93,8 +97,10 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
           } @else {
             @if (requests.length === 0) {
               <div class="flex-1 flex flex-col items-center justify-center text-center p-10">
-                <mat-icon class="text-[#76432F]/30 !w-10 !h-10 !text-[40px] mb-2">inbox</mat-icon>
+                <mat-icon class="text-[#76432F]/30 !w-10 !h-10 !text-[40px] mb-2"> inbox </mat-icon>
+
                 <h3 class="text-base font-semibold text-[#5A331F]">Nenhum resultado</h3>
+
                 <p class="text-sm text-[#76432F]/60 mt-1">
                   @if (isSearchActive) {
                     Nenhuma solicitação encontrada para "{{ appliedSearchTerm }}".
@@ -116,16 +122,24 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
                       <th class="px-4 py-3 font-semibold text-right">Ações</th>
                     </tr>
                   </thead>
+
                   <tbody class="divide-y divide-[#76432F]/8">
                     @for (req of requests; track req.id) {
                       <tr class="hover:bg-[#F9F5EE]/60 transition-colors">
                         <td class="px-4 py-3">
-                          <div class="font-medium text-[#3D241A]">{{ req.shopkeeperName }}</div>
-                          <div class="text-xs text-[#76432F]/60">{{ req.shopkeeperEmail }}</div>
+                          <div class="font-medium text-[#3D241A]">
+                            {{ req.shopkeeperName }}
+                          </div>
+
+                          <div class="text-xs text-[#76432F]/60">
+                            {{ req.shopkeeperEmail }}
+                          </div>
                         </td>
+
                         <td class="px-4 py-3 text-[#76432F]/70">
                           {{ req.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                         </td>
+
                         <td class="px-4 py-3">
                           <input
                             type="text"
@@ -134,24 +148,40 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
                             class="text-xs border border-[#76432F]/20 rounded px-2 py-1.5 w-full max-w-xs outline-none focus:border-[#76432F] focus:ring-1 focus:ring-[#76432F]/30"
                           />
                         </td>
+
                         <td class="px-4 py-3 text-right space-x-2 whitespace-nowrap">
                           <button
                             type="button"
                             [disabled]="processingRequests.has(req.id)"
                             (click)="handleDecide(req.id, 'APPROVE')"
-                            class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+                            class="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium rounded-md transition-colors min-w-[90px]"
                           >
-                            <mat-icon class="icon-xs">check</mat-icon>
-                            {{ processingRequests.has(req.id) ? '...' : 'Aprovar' }}
+                            @if (processingRequests.has(req.id)) {
+                              <span
+                                class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"
+                              ></span>
+                              Processando
+                            } @else {
+                              <mat-icon class="icon-xs">check</mat-icon>
+                              Aprovar
+                            }
                           </button>
+
                           <button
                             type="button"
                             [disabled]="processingRequests.has(req.id)"
                             (click)="handleDecide(req.id, 'REJECT')"
-                            class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#D87D76] hover:bg-[#C96B64] disabled:opacity-50 text-white text-xs font-medium rounded-md transition-colors"
+                            class="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-[#D87D76] hover:bg-[#C96B64] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium rounded-md transition-colors min-w-[90px]"
                           >
-                            <mat-icon class="icon-xs">close</mat-icon>
-                            {{ processingRequests.has(req.id) ? '...' : 'Rejeitar' }}
+                            @if (processingRequests.has(req.id)) {
+                              <span
+                                class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin"
+                              ></span>
+                              Processando
+                            } @else {
+                              <mat-icon class="icon-xs">close</mat-icon>
+                              Rejeitar
+                            }
                           </button>
                         </td>
                       </tr>
@@ -163,10 +193,10 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
           }
         </div>
 
-        <!-- Paginação -->
         @if (!isLoading && totalPages > 1) {
           <div class="shrink-0 flex items-center justify-between px-1">
-            <span class="text-xs text-[#76432F]/70">Página {{ page }} de {{ totalPages }}</span>
+            <span class="text-xs text-[#76432F]/70"> Página {{ page }} de {{ totalPages }} </span>
+
             <div class="flex gap-2">
               <button
                 type="button"
@@ -177,6 +207,7 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
                 <mat-icon class="icon-xs">chevron_left</mat-icon>
                 Anterior
               </button>
+
               <button
                 type="button"
                 [disabled]="page >= totalPages"
@@ -194,13 +225,13 @@ import { ApprovalRequest, ApprovalService } from '../../../../core/services/appr
   `,
   styles: [
     `
-      /* Tamanhos de ícone consistentes com o texto ao redor dos botões */
       .icon-sm {
         width: 18px;
         height: 18px;
         font-size: 18px;
         line-height: 18px;
       }
+
       .icon-xs {
         width: 14px;
         height: 14px;
@@ -221,37 +252,36 @@ export class ApprovalRequestsComponent implements OnInit {
   processingRequests = new Set<string>();
 
   isLoading = true;
+
   page = 1;
   limit = 20;
   total = 0;
   totalPages = 0;
 
-  /** Valor digitado no input, ainda não necessariamente pesquisado. */
   searchTerm = '';
-  /** Termo efetivamente aplicado na última busca (usado nas mensagens da tela). */
   appliedSearchTerm = '';
-  /** Indica se a lista atual está filtrada por uma busca. */
   isSearchActive = false;
 
   ngOnInit(): void {
     this.loadRequests();
   }
 
-  /** Dispara a busca somente quando o usuário clica em "Buscar" (ou aperta Enter). */
   handleSearch(): void {
     const term = this.searchTerm.trim();
+
     this.appliedSearchTerm = term;
     this.isSearchActive = term.length > 0;
     this.page = 1;
+
     this.loadRequests();
   }
 
-  /** Limpa a busca e volta a exibir todos os itens da página. */
   handleClear(): void {
     this.searchTerm = '';
     this.appliedSearchTerm = '';
     this.isSearchActive = false;
     this.page = 1;
+
     this.loadRequests();
   }
 
@@ -271,11 +301,14 @@ export class ApprovalRequestsComponent implements OnInit {
           this.total = res.total;
           this.totalPages = res.totalPages;
           this.isLoading = false;
+
           this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erro ao carregar solicitações', err);
+
           this.isLoading = false;
+
           this.cdr.detectChanges();
         },
       });
@@ -285,9 +318,10 @@ export class ApprovalRequestsComponent implements OnInit {
     const reason = this.reasons[approvalRequestId];
 
     if (action === 'REJECT' && (!reason || !reason.trim())) {
-      alert('O motivo da rejeição é obrigatório.');
+      this.showError('O motivo da rejeição é obrigatório.');
       return;
     }
+
     if (this.processingRequests.has(approvalRequestId)) {
       return;
     }
@@ -297,15 +331,60 @@ export class ApprovalRequestsComponent implements OnInit {
     const payload = {
       approvalRequestId,
       action,
-      ...(action === 'REJECT' && { reason: reason.trim() }),
+      ...(action === 'REJECT' && {
+        reason: reason.trim(),
+      }),
     };
 
-    this.approvalService.decide(payload).subscribe({
-      next: () => {
-        this.requests = this.requests.filter((r) => r.id !== approvalRequestId);
-        this.total -= 1;
-      },
-      error: (err) => alert(`Erro: ${err.error?.message || 'Falha ao processar'}`),
+    this.approvalService
+      .decide(payload)
+      .pipe(
+        finalize(() => {
+          this.processingRequests.delete(approvalRequestId);
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          const message =
+            action === 'APPROVE'
+              ? 'Solicitação aprovada com sucesso!'
+              : 'Solicitação rejeitada com sucesso!';
+
+          this.showSuccess(message);
+          this.loadRequests();
+        },
+        error: (err) => {
+          console.error('Erro ao decidir solicitação:', err);
+
+          const message = err.error?.message || 'Não foi possível processar a solicitação.';
+
+          this.showError(message);
+        },
+      });
+  }
+
+  private showSuccess(message: string): void {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: message,
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  }
+
+  private showError(message: string): void {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: message,
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
     });
   }
 
@@ -316,6 +395,7 @@ export class ApprovalRequestsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao fazer logout:', err);
+
         this.authService.logoutLocal();
         this.router.navigate(['/approval/auth']);
       },
