@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { approvalGuard } from './core/guards/approval.guard';
 import { guestAdminGuard } from './core/guards/guestAdmin.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
+import { shopkeeperGuestGuard } from './core/guards/shopkeeper-auth.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 
 export const routes: Routes = [
@@ -42,6 +43,7 @@ export const routes: Routes = [
 
   {
     path: 'register-shopkeeper/auth',
+    canActivate: [shopkeeperGuestGuard],
     loadComponent: () =>
       import('./features/onboarding/authentication/auth-page.component').then(
         (m) => m.AuthPageComponent,

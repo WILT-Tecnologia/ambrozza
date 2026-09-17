@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as argon2 from 'argon2';
-import { IHashService } from 'src/modules/auth-onboarding/domain/providers/hash.service.interface';
+import { IHashService } from 'src/modules/auth-onboarding/domain/providers/interface/hash.service.interface';
 
 @Injectable()
 export class Argon2HashService implements IHashService {

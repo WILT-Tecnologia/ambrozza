@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
 import { ApprovalModule } from './modules/approval-superAdmin/approval.module';
+import { AuthModule } from './modules/auth-onboarding/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PrismaModule,
     ApprovalModule,
     AdminAuthModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

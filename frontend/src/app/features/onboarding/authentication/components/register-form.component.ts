@@ -1,6 +1,11 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { OnboardingAuthService } from './services/onboarding-auth.service';
+
+export interface RegisterFormPayload {
+  name: string;
+  email: string;
+  password: string;
+}
 
 @Component({
   selector: 'app-register-form',
@@ -87,10 +92,10 @@ import { OnboardingAuthService } from './services/onboarding-auth.service';
 
       <button
         type="submit"
-        [disabled]="registerForm.invalid || isLoading"
+        [disabled]="registerForm.invalid || isSubmitting"
         class="w-full mt-4 py-3.5 px-4 bg-[#8C3A32] hover:bg-[#722E28] text-white font-semibold rounded-full shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
       >
-        @if (isLoading) {
+        @if (isSubmitting) {
           <span>Aguarde</span>
           <span
             class="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
@@ -104,12 +109,13 @@ import { OnboardingAuthService } from './services/onboarding-auth.service';
 })
 export class RegisterFormComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(OnboardingAuthService);
-  private cdr = inject(ChangeDetectorRef);
 
-  isLoading = false;
-  errorMessage: string | null = null;
-  successMessage: string | null = null;
+  @Input() isSubmitting = false;
+  @Input() errorMessage: string | null = null;
+  @Input() successMessage: string | null = null;
+
+  @Output() register = new EventEmitter<RegisterFormPayload>();
+
   registerForm: FormGroup = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
@@ -118,38 +124,9 @@ export class RegisterFormComponent {
   });
 
   onSubmit(): void {
-    if (this.registerForm.invalid || this.isLoading) return;
+    if (this.registerForm.invalid) return;
 
-    this.isLoading = true;
-    this.errorMessage = null;
-    this.successMessage = null;
     const { fullName, email, password } = this.registerForm.value;
-
-    this.authService.register({ name: fullName, email, password }).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        this.successMessage = response.message || 'Cadastro realizado com sucesso.';
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        this.isLoading = false;
-
-        if (err.status === 429) {
-          this.errorMessage = 'Ops! Algo deu errado. Tente novamente mais tarde.';
-          this.cdr.markForCheck();
-          return;
-        }
-
-        const backendMessage = err.error?.message;
-
-        if (Array.isArray(backendMessage)) {
-          this.errorMessage = backendMessage[0];
-        } else {
-          this.errorMessage = backendMessage || 'Erro ao realizar o cadastro.';
-        }
-
-        this.cdr.markForCheck();
-      },
-    });
+    this.register.emit({ name: fullName, email, password });
   }
 }

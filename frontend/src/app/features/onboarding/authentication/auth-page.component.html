@@ -32,7 +32,8 @@
             'opacity-0 -translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'login'
           }">
 
-          <app-login-form (forgotPassword)="setMode('forgot')" />
+          <app-login-form [isSubmitting]="isSubmitting()" [errorMessage]="errorMessage()" (login)="onLogin($event)"
+            (forgotPassword)="setMode('forgot')" />
         </div>
 
 
@@ -40,7 +41,8 @@
             'opacity-100 translate-x-0 relative z-10': mode() === 'register',
             'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'register'
           }">
-          <app-register-form />
+          <app-register-form [isSubmitting]="isSubmitting()" [errorMessage]="errorMessage()"
+            [successMessage]="successMessage()" (register)="onRegister($event)" />
         </div>
 
 
