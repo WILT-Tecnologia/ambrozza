@@ -7,8 +7,8 @@ import {
   LoginShopkeeperOutputDto,
 } from '../../features/onboarding/authentication/dtos/login-shopkeeper.dto';
 import {
-  RegisterShopkeeperInputDto,
   RegisterShopkeeperOutputDto,
+  RegisterShopkeeperRequestDto,
 } from '../../features/onboarding/authentication/dtos/register-shopkeeper.dto';
 
 export interface RefreshShopkeeperResponse {
@@ -24,10 +24,9 @@ export class OnboardingAuthService {
   private accessToken: string | null = null;
   private currentShopkeeper: LoginShopkeeperOutputDto['shopkeeper'] | null = null;
 
-  register(dto: RegisterShopkeeperInputDto): Observable<RegisterShopkeeperOutputDto> {
+  register(dto: RegisterShopkeeperRequestDto): Observable<RegisterShopkeeperOutputDto> {
     return this.http.post<RegisterShopkeeperOutputDto>(`${this.apiUrl}/register`, dto);
   }
-
   login(dto: LoginShopkeeperInputDto): Observable<LoginShopkeeperOutputDto> {
     return this.http
       .post<LoginShopkeeperOutputDto>(`${this.apiUrl}/login`, dto, {

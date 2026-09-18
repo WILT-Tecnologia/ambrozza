@@ -11,3 +11,6 @@ export interface RegisterShopkeeperOutputDto {
   approvalStatus: string;
   message?: string;
 }
+export interface RegisterShopkeeperRequestDto extends RegisterShopkeeperInputDto {
+  confirmPassword: string;
+}
