@@ -29,7 +29,8 @@ export class AuthOnboardingController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterShopkeeperHttpDto) {
-    const result = await this.registerAccountUseCase.execute(dto);
+    const { confirmPassword, ...registerInput } = dto;
+    const result = await this.registerAccountUseCase.execute(registerInput);
 
     return {
       ...result,

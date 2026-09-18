@@ -47,12 +47,12 @@ export class AuthPageComponent {
     });
   }
 
-  onRegister({ name, email, password }: RegisterFormPayload): void {
+  onRegister({ name, email, password, confirmPassword }: RegisterFormPayload): void {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.authService.register({ name, email, password }).subscribe({
+    this.authService.register({ name, email, password, confirmPassword }).subscribe({
       next: (response) => {
         this.isSubmitting.set(false);
         this.successMessage.set(response.message || 'Cadastro realizado com sucesso.');

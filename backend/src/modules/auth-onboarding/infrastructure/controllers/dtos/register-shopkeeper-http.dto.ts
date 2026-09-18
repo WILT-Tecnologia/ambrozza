@@ -7,6 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { RegisterShopkeeperInputDto } from '../../../application/dtos/register-shopkeeper.dto';
+import { Match } from './decorators/match.decorator';
 
 export class RegisterShopkeeperHttpDto implements RegisterShopkeeperInputDto {
   @Transform(({ value }) => value?.trim())
@@ -26,4 +27,9 @@ export class RegisterShopkeeperHttpDto implements RegisterShopkeeperInputDto {
   @MinLength(6)
   @MaxLength(72)
   password!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Match('password', { message: 'As senhas não coincidem.' })
+  confirmPassword!: string;
 }
