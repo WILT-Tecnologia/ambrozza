@@ -10,6 +10,14 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'register-shopkeeper/auth',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'onboarding',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender,
   },

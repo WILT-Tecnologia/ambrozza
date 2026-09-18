@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
-import { AuthService } from '../../core/services/auth.service';
+import { OnboardingAuthService } from '../../core/services/onboarding-auth.service';
 import { cpfCnpjValidator } from '../../shared/utils/validators-cpf-cnpj';
 import { phoneValidator } from '../../shared/utils/validators-phone';
 import { OnboardingStepsComponent } from './components/onboarding-steps.component';
@@ -123,14 +123,14 @@ import { Step6ReviewComponent } from './components/step-6-review/review-onboardi
   `,
 })
 export class OnboardingComponent {
-  private authService = inject(AuthService);
+  private authService = inject(OnboardingAuthService);
   private fb = inject(FormBuilder);
 
   currentMaxStep = 6;
   currentStep = signal(1);
   onboardingForm: FormGroup;
   constructor() {
-    const currentUser = this.authService.getCurrentUser();
+    const currentUser = this.authService.getCurrentShopkeeper();
     this.onboardingForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
       slug: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],

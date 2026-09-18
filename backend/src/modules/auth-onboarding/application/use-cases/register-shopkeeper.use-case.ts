@@ -1,8 +1,8 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { ApprovalRequest } from '../../../approval-superAdmin/domain/entities/administration-request.entity';
 import { Shopkeeper } from '../../domain/entities/shopkeeper.entity';
-import type { IHashService } from '../../domain/providers/hash.service.interface';
-import { IHashServiceToken } from '../../domain/providers/hash.service.interface';
+import type { IHashService } from '../../domain/providers/interface/hash.service.interface';
+import { IHashServiceToken } from '../../domain/providers/interface/hash.service.interface';
 
 import {
   type IShopkeeperRepository,
@@ -37,7 +37,10 @@ export class RegisterShopkeeperUseCase {
       await this.shopkeeperRepository.findByEmail(email);
 
     if (existingShopkeeper) {
-      if (existingShopkeeper.approvalStatus === 'PENDING') {
+      if (
+        existingShopkeeper.isRejected() === false &&
+        !existingShopkeeper.isApproved()
+      ) {
         throw new ConflictException(
           'Ops! Esse endereço de e-mail já tem uma solicitação de cadastro pendente.',
         );
