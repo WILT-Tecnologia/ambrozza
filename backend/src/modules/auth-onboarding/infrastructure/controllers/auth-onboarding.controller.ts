@@ -11,10 +11,13 @@ import { type Request, type Response } from 'express';
 import { RegisterShopkeeperUseCase } from '../../application/use-cases/register-shopkeeper.use-case';
 import { RegisterShopkeeperHttpDto } from './dtos/register-shopkeeper-http.dto';
 
+import { ForgotPasswordUseCase } from '../../application/use-cases/forgot-password.use-case';
 import { LoginShopkeeperUseCase } from '../../application/use-cases/login-shopkeeper.use-case';
 import { RefreshShopkeeperTokenUseCase } from '../../application/use-cases/refresh-shopkeeper-token.use-case';
+import { ResetPasswordUseCase } from '../../application/use-cases/reset-password.use-case';
+import { ForgotPasswordHttpDto } from './dtos/forgot-password-http.dto';
 import { LoginShopkeeperHttpDto } from './dtos/login-shopkeeper-http.dto';
-
+import { ResetPasswordHttpDto } from './dtos/reset-password-http.dto';
 const REFRESH_COOKIE_NAME = 'shopkeeperRefreshToken';
 const REFRESH_COOKIE_PATH = '/auth-onboarding/refresh';
 
@@ -24,6 +27,8 @@ export class AuthOnboardingController {
     private readonly registerAccountUseCase: RegisterShopkeeperUseCase,
     private readonly loginShopkeeperUseCase: LoginShopkeeperUseCase,
     private readonly refreshShopkeeperTokenUseCase: RefreshShopkeeperTokenUseCase,
+    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
   ) {}
 
   @Post('register')
@@ -67,6 +72,31 @@ export class AuthOnboardingController {
   logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie(REFRESH_COOKIE_NAME, { path: REFRESH_COOKIE_PATH });
     return { message: 'Logout realizado com sucesso.' };
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() dto: ResetPasswordHttpDto) {
+    await this.resetPasswordUseCase.execute(
+      dto.email,
+      dto.code,
+      dto.newPassword,
+    );
+
+    return {
+      message: 'Senha alterada com sucesso.',
+    };
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(@Body() dto: ForgotPasswordHttpDto) {
+    await this.forgotPasswordUseCase.execute(dto.email);
+
+    return {
+      message:
+        'Você receberá um código de recuperação em instantes no seu e-mail.',
+    };
   }
 
   private setRefreshCookie(response: Response, refreshToken: string): void {

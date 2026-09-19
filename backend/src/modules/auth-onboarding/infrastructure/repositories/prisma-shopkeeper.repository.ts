@@ -78,6 +78,20 @@ export class PrismaShopkeeperRepository implements IShopkeeperRepository {
     });
   }
 
+  async updatePassword(
+    shopkeeperId: string,
+    passwordHash: string,
+  ): Promise<void> {
+    await this.prisma.shopkeeper.update({
+      where: {
+        id: shopkeeperId,
+      },
+      data: {
+        password: passwordHash,
+      },
+    });
+  }
+
   async hasStore(shopkeeperId: string): Promise<boolean> {
     const store = await this.prisma.store.findUnique({
       where: { shopkeeperId },

@@ -22,15 +22,16 @@ model SuperAdmin {
 }
 
 model Shopkeeper {
-  id               String            @id @default(uuid())
-  name             String
-  email            String            @unique
-  password         String
-  approvalStatus   ApprovalStatus    @default(PENDING)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  store            Store?
-  approvalRequests ApprovalRequest[]
+  id                 String              @id @default(uuid())
+  name               String
+  email              String              @unique
+  password           String
+  approvalStatus     ApprovalStatus      @default(PENDING)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  store              Store?
+  approvalRequests   ApprovalRequest[]
+  passwordResetCodes PasswordResetCode[]
 
   @@map("shopkeepers")
 }
@@ -68,12 +69,12 @@ model ApprovalRequest {
 // 3. LOJAS E MEMBROS
 
 model Store {
-  id           String            @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
-  slug         String            @unique
-  shopkeeperId String            @unique
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  slug         String   @unique
+  shopkeeperId String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   shopkeeper  Shopkeeper        @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
   memberships StoreMembership[]
@@ -114,6 +115,19 @@ model Order {
   @@map("orders")
 }
 
+model PasswordResetCode {
+  id           String    @id @default(uuid())
+  shopkeeperId String
+  codeHash     String
+  expiresAt    DateTime
+  usedAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  shopkeeper Shopkeeper @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+
+  @@index([shopkeeperId])
+  @@map("password_reset_codes")
+}
 
 enum ApprovalStatus {
   PENDING
