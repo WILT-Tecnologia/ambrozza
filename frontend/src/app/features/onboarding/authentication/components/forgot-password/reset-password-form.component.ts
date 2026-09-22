@@ -1,24 +1,38 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { OnboardingAuthService } from '../../../../../core/services/onboarding-auth.service';
 
 @Component({
-  selector: 'app-forgot-password-form',
+  selector: 'app-reset-password-form',
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
-    <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <div class="space-y-1">
-        <label for="forgot-email" class="block text-xs font-semibold text-[#8C7A78]">
-          E-mail cadastrado
+        <label for="new-password" class="block text-xs font-semibold text-[#8C7A78]">
+          Nova senha
         </label>
 
         <input
-          id="forgot-email"
-          type="email"
-          formControlName="email"
-          placeholder="seu@email.com"
+          id="new-password"
+          type="password"
+          formControlName="newPassword"
+          placeholder="Digite sua nova senha"
+          class="w-full py-2 bg-transparent border-b border-[#D4C9BD] text-[#4A2E2B] font-medium placeholder-[#8C7A78]/50 focus:outline-none focus:border-[#8C3A32] transition-colors"
+        />
+      </div>
+
+      <div class="space-y-1">
+        <label for="confirm-password" class="block text-xs font-semibold text-[#8C7A78]">
+          Confirmar nova senha
+        </label>
+
+        <input
+          id="confirm-password"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Digite a senha novamente"
           class="w-full py-2 bg-transparent border-b border-[#D4C9BD] text-[#4A2E2B] font-medium placeholder-[#8C7A78]/50 focus:outline-none focus:border-[#8C3A32] transition-colors"
         />
       </div>
@@ -33,10 +47,10 @@ import { OnboardingAuthService } from '../../../../../core/services/onboarding-a
 
       <button
         type="submit"
-        [disabled]="forgotForm.invalid || isLoading"
+        [disabled]="resetForm.invalid || isLoading"
         class="w-full mt-4 py-3.5 px-4 bg-[#8C3A32] hover:bg-[#722E28] text-white font-semibold rounded-full shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
-        {{ isLoading ? 'Enviando...' : 'Enviar Instruções' }}
+        {{ isLoading ? 'Alterando...' : 'Alterar senha' }}
       </button>
 
       <div class="text-center pt-2">
@@ -51,49 +65,54 @@ import { OnboardingAuthService } from '../../../../../core/services/onboarding-a
     </form>
   `,
 })
-export class ForgotPasswordFormComponent {
+export class ResetPasswordFormComponent {
   private fb = inject(FormBuilder);
   private authService = inject(OnboardingAuthService);
 
+  @Input({ required: true }) resetToken = '';
+
   @Output() backToLogin = new EventEmitter<void>();
-  @Output() forgotPasswordSuccess = new EventEmitter<string>();
+  @Output() resetSuccess = new EventEmitter<string>();
 
   isLoading = false;
   errorMessage = '';
 
-  forgotForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+  resetForm: FormGroup = this.fb.group({
+    newPassword: ['', [Validators.required, Validators.minLength(8)]],
+    confirmPassword: ['', [Validators.required]],
   });
 
   onSubmit(): void {
-    if (this.forgotForm.invalid || this.isLoading) {
+    if (this.resetForm.invalid || this.isLoading) {
       return;
     }
 
-    const email = this.forgotForm.value.email;
+    const { newPassword, confirmPassword } = this.resetForm.value;
+
+    if (newPassword !== confirmPassword) {
+      this.errorMessage = 'As senhas não coincidem.';
+      return;
+    }
 
     this.errorMessage = '';
     this.isLoading = true;
 
     this.authService
-      .forgotPassword({
-        email,
+      .resetPassword({
+        resetToken: this.resetToken,
+        newPassword,
       })
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-        }),
-      )
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: () => {
-          this.forgotPasswordSuccess.emit(email);
+        next: (response) => {
+          this.resetSuccess.emit(response.message);
         },
         error: (error) => {
           const backendMessage = error?.error?.message;
 
           this.errorMessage = Array.isArray(backendMessage)
             ? backendMessage[0]
-            : backendMessage || 'Não foi possível enviar o e-mail de recuperação.';
+            : backendMessage || 'Não foi possível alterar a senha.';
         },
       });
   }

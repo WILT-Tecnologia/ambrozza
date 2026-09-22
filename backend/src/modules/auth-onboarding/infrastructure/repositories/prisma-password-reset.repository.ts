@@ -42,6 +42,14 @@ export class PrismaPasswordResetRepository implements IPasswordResetRepository {
     });
   }
 
+  async findById(id: string): Promise<PasswordResetCode | null> {
+    return this.prisma.passwordResetCode.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async markAsUsed(id: string): Promise<void> {
     await this.prisma.passwordResetCode.update({
       where: {

@@ -20,6 +20,19 @@ export class JwtShopkeeperTokenService implements ITokenService {
     });
   }
 
+  generatePasswordResetToken(payload: TokenPayload): string {
+    console.log('PAYLOAD DENTRO DO JWT SERVICE:', payload);
+
+    const token = this.jwtService.sign(payload, {
+      secret: process.env.SHOPKEEPER_PASSWORD_RESET_TOKEN_SECRET,
+      expiresIn: '10m',
+    });
+
+    console.log('PAYLOAD DECODIFICADO:', this.jwtService.decode(token));
+
+    return token;
+  }
+
   verifyAccessToken(token: string): TokenPayload {
     try {
       return this.jwtService.verify(token, {
@@ -37,6 +50,18 @@ export class JwtShopkeeperTokenService implements ITokenService {
       });
     } catch {
       throw new UnauthorizedException('Refresh token inválido ou expirado.');
+    }
+  }
+
+  verifyPasswordResetToken(token: string): TokenPayload {
+    try {
+      return this.jwtService.verify(token, {
+        secret: process.env.SHOPKEEPER_PASSWORD_RESET_TOKEN_SECRET,
+      });
+    } catch {
+      throw new UnauthorizedException(
+        'Token de recuperação inválido ou expirado.',
+      );
     }
   }
 }

@@ -15,5 +15,7 @@ export interface IPasswordResetRepository {
     shopkeeperId: string,
   ): Promise<PasswordResetCode | null>;
 
+  findById(id: string): Promise<PasswordResetCode | null>;
+
   markAsUsed(id: string): Promise<void>;
 }

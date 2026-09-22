@@ -37,7 +37,6 @@ export class EmailService implements IEmailService {
     });
 
     if (error) {
-      console.error('ERRO RESEND:', error);
       throw new InternalServerErrorException(
         'Não foi possível enviar o e-mail de recuperação.',
       );

@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-
 import {
   IHashService,
   IHashServiceToken,
 } from '../../domain/providers/interface/hash.service.interface';
-
+import {
+  ITokenService,
+  ITokenServiceToken,
+} from '../../domain/providers/interface/token.service.interface';
 import {
   IPasswordResetRepository,
   IPasswordResetRepositoryToken,
 } from '../../domain/providers/repositories/password-reset.repository.interface';
-
 import {
   IShopkeeperRepository,
   IShopkeeperRepositoryToken,
@@ -26,29 +27,40 @@ export class ResetPasswordUseCase {
 
     @Inject(IHashServiceToken)
     private readonly hashService: IHashService,
+
+    @Inject(ITokenServiceToken)
+    private readonly tokenService: ITokenService,
   ) {}
 
-  async execute(
-    email: string,
-    code: string,
-    newPassword: string,
-  ): Promise<void> {
-    const normalizedEmail = email.trim().toLowerCase();
+  async execute(resetToken: string, newPassword: string): Promise<void> {
+    const payload = this.tokenService.verifyPasswordResetToken(resetToken);
 
-    const shopkeeper =
-      await this.shopkeeperRepository.findByEmail(normalizedEmail);
-
-    if (!shopkeeper || !shopkeeper.id) {
-      throw new Error('Código de recuperação inválido.');
+    if (!payload.resetCodeId) {
+      throw new Error('Token de recuperação inválido.');
     }
 
-    const resetCode =
-      await this.passwordResetRepository.findLatestByShopkeeperId(
-        shopkeeper.id,
-      );
+    const shopkeeper = await this.shopkeeperRepository.findByEmail(
+      payload.email,
+    );
+
+    if (!shopkeeper || !shopkeeper.id) {
+      throw new Error('Token de recuperação inválido.');
+    }
+
+    if (shopkeeper.id !== payload.sub) {
+      throw new Error('Token de recuperação inválido.');
+    }
+
+    const resetCode = await this.passwordResetRepository.findById(
+      payload.resetCodeId,
+    );
 
     if (!resetCode) {
       throw new Error('Código de recuperação inválido.');
+    }
+
+    if (resetCode.shopkeeperId !== shopkeeper.id) {
+      throw new Error('Token de recuperação inválido.');
     }
 
     if (resetCode.usedAt) {
@@ -57,15 +69,6 @@ export class ResetPasswordUseCase {
 
     if (resetCode.expiresAt < new Date()) {
       throw new Error('Código de recuperação expirado.');
-    }
-
-    const isCodeValid = await this.hashService.compare(
-      code,
-      resetCode.codeHash,
-    );
-
-    if (!isCodeValid) {
-      throw new Error('Código de recuperação inválido.');
     }
 
     const passwordHash = await this.hashService.hash(newPassword);
