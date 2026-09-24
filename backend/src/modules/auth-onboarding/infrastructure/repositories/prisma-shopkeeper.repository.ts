@@ -66,6 +66,25 @@ export class PrismaShopkeeperRepository implements IShopkeeperRepository {
     }
   }
 
+  async updateOnboardingData(
+    shopkeeperId: string,
+    data: {
+      name: string;
+      document: string;
+      phone: string;
+    },
+  ): Promise<void> {
+    await this.prisma.shopkeeper.update({
+      where: {
+        id: shopkeeperId,
+      },
+      data: {
+        document: data.document.trim(),
+        phone: data.phone.trim(),
+      },
+    });
+  }
+
   async updateApprovalStatus(
     shopkeeperId: string,
     status: string,

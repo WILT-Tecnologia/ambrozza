@@ -22,16 +22,19 @@ model SuperAdmin {
 }
 
 model Shopkeeper {
-  id                 String              @id @default(uuid())
+  id                 String                  @id @default(uuid())
   name               String
-  email              String              @unique
+  email              String                  @unique
   password           String
-  approvalStatus     ApprovalStatus      @default(PENDING)
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  document           String?                 @unique
+  phone              String?
+  approvalStatus     ApprovalStatus          @default(PENDING)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
   store              Store?
   approvalRequests   ApprovalRequest[]
   passwordResetCodes PasswordResetCode[]
+  onboardingConsent  StoreOnboardingConsent?
 
   @@map("shopkeepers")
 }
@@ -69,18 +72,44 @@ model ApprovalRequest {
 // 3. LOJAS E MEMBROS
 
 model Store {
-  id           String   @id @default(uuid())
-  name         String
-  slug         String   @unique
-  shopkeeperId String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(uuid())
+  name          String
+  slug          String   @unique
+  description   String
 
-  shopkeeper  Shopkeeper        @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
-  memberships StoreMembership[]
-  orders      Order[]
+  cep           String
+  state         String
+  city          String
+  street        String
+  number        String
+  neighborhood  String
+  complement    String?
+
+  allowDelivery Boolean  @default(true)
+  allowPickup   Boolean  @default(false)
+
+  colorPalette  String
+
+  shopkeeperId  String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  shopkeeper    Shopkeeper         @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+  memberships   StoreMembership[]
+  orders        Order[]
 
   @@map("stores")
+}
+
+model StoreOnboardingConsent {
+  id              String     @id @default(uuid())
+  shopkeeperId    String     @unique
+  termsAccepted   Boolean
+  privacyAccepted Boolean
+  acceptedAt      DateTime   @default(now())
+  shopkeeper      Shopkeeper @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+
+  @@map("store_onboarding_consents")
 }
 
 model StoreMembership {
