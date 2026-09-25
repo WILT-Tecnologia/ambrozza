@@ -57,6 +57,14 @@ export class CreateStoreUseCase {
 
         const normalizedSlug = input.slug.trim().toLowerCase();
 
+        const slugRegex = /^[a-z]+(?:-[a-z]+)*$/;
+
+        if (!slugRegex.test(normalizedSlug)) {
+          throw new ConflictException(
+            'O slug deve conter apenas letras minúsculas e hífens, sem números ou caracteres especiais.',
+          );
+        }
+
         const existingSlug = await storeRepository.findBySlug(normalizedSlug);
 
         if (existingSlug) {

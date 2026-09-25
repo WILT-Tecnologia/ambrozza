@@ -2,9 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
+import { StoreService } from '../../core/services/create-store.service';
 import { OnboardingAuthService } from '../../core/services/onboarding-auth.service';
 import { cpfCnpjValidator } from '../../shared/utils/validators-cpf-cnpj';
 import { phoneValidator } from '../../shared/utils/validators-phone';
+import { LoginShopkeeperOutputDto } from './authentication/dtos/login-shopkeeper.dto';
 import { OnboardingStepsComponent } from './components/onboarding-steps.component';
 import { Step1StoreComponent } from './components/step-1-store/store-onboarding';
 import { Step2OwnerComponent } from './components/step-2-owner/owner-onboarding';
@@ -12,6 +14,7 @@ import { Step3AddressComponent } from './components/step-3-address/address-onboa
 import { Step4OperationComponent } from './components/step-4-operation/operation-onboarding';
 import { Step5PaletteComponent } from './components/step-5-palette/palette-onboarding';
 import { Step6ReviewComponent } from './components/step-6-review/review-onboarding';
+
 @Component({
   selector: 'app-onboarding',
   standalone: true,
@@ -62,7 +65,11 @@ import { Step6ReviewComponent } from './components/step-6-review/review-onboardi
                 <app-step-1-store [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
               }
               @case (2) {
-                <app-step-2-owner [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
+                <app-step-2-owner
+                  [currentMaxStep]="currentMaxStep"
+                  [form]="onboardingForm"
+                  [currentShopkeeper]="currentShopkeeper"
+                />
               }
               @case (3) {
                 <app-step-3-address [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
@@ -125,24 +132,27 @@ import { Step6ReviewComponent } from './components/step-6-review/review-onboardi
 export class OnboardingComponent {
   private authService = inject(OnboardingAuthService);
   private fb = inject(FormBuilder);
+  private storeService = inject(StoreService);
 
+  currentShopkeeper: LoginShopkeeperOutputDto['shopkeeper'];
   currentMaxStep = 6;
   currentStep = signal(1);
   onboardingForm: FormGroup;
   constructor() {
-    const currentUser = this.authService.getCurrentShopkeeper();
+    const currentShopkeeper = this.authService.getCurrentShopkeeper();
+
+    if (!currentShopkeeper) {
+      throw new Error('Lojista autenticado não encontrado.');
+    }
+
+    this.currentShopkeeper = currentShopkeeper;
     this.onboardingForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
       slug: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       description: ['', [Validators.required, Validators.minLength(30), Validators.maxLength(250)]],
 
-      ownerName: [
-        currentUser?.name || '',
-        [Validators.required, Validators.minLength(3), Validators.maxLength(80)],
-      ],
       document: ['', [Validators.required, cpfCnpjValidator]],
       phone: ['', [Validators.required, phoneValidator]],
-      email: [{ value: currentUser?.email || '', disabled: true }],
 
       cep: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(9)]],
       state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
@@ -154,8 +164,10 @@ export class OnboardingComponent {
 
       allowDelivery: [true],
       allowPickup: [false],
+
       acceptTerms: [false, Validators.requiredTrue],
       acceptPrivacy: [false, Validators.requiredTrue],
+
       colorPalette: ['chocolate', Validators.required],
     });
   }
@@ -165,7 +177,7 @@ export class OnboardingComponent {
 
     const stepFields: Record<number, string[]> = {
       1: ['name', 'slug', 'description'],
-      2: ['ownerName', 'document', 'phone'],
+      2: ['document', 'phone'],
       3: ['cep', 'state', 'city', 'street', 'number', 'neighborhood'],
     };
 
@@ -228,9 +240,7 @@ export class OnboardingComponent {
     }
     if (step === 2) {
       return !!(
-        this.onboardingForm.get('ownerName')?.valid &&
-        this.onboardingForm.get('document')?.valid &&
-        this.onboardingForm.get('phone')?.valid
+        this.onboardingForm.get('document')?.valid && this.onboardingForm.get('phone')?.valid
       );
     }
     if (step === 3) {
@@ -246,9 +256,21 @@ export class OnboardingComponent {
     return true;
   }
 
-  submit() {
-    if (this.onboardingForm.valid) {
-      console.log('Dados do Onboarding:', this.onboardingForm.getRawValue());
+  submit(): void {
+    if (this.onboardingForm.invalid) {
+      this.onboardingForm.markAllAsTouched();
+      return;
     }
+
+    const data = this.onboardingForm.getRawValue();
+
+    this.storeService.createStore(data).subscribe({
+      next: (response) => {
+        console.log('Loja criada com sucesso:', response);
+      },
+      error: (error) => {
+        console.error('Erro ao criar loja:', error);
+      },
+    });
   }
 }

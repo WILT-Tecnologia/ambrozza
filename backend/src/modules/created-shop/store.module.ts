@@ -8,7 +8,7 @@ import { PrismaUnitOfWork } from 'src/shared/infrastructure/database/unit-of-wor
 import { IUnitOfWorkToken } from 'src/shared/infrastructure/database/unit-of-work/unit-of-work.interface';
 import { CreateStoreUseCase } from './application/use-cases/create-store.use-case';
 import { IStoreRepositoryToken } from './domain/repositories/store.repository.interface';
-import { StoreController } from './infrastructure/controllers/store.controller';
+import { StoreController } from './infrastructure/controllers/create-store.controller';
 import { JwtShopkeeperAuthGuard } from './infrastructure/guards/jwt-shopkeeper-auth.guard';
 import { PrismaStoreRepository } from './infrastructure/repositories/prisma-store.repository';
 @Module({
