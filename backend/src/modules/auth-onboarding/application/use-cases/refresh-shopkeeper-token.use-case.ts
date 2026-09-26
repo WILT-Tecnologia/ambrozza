@@ -47,6 +47,13 @@ export class RefreshShopkeeperTokenUseCase {
       email: shopkeeper.email,
     });
 
-    return { accessToken };
+    return {
+      accessToken,
+      shopkeeper: {
+        id: shopkeeper.id!,
+        name: shopkeeper.name,
+        email: shopkeeper.email,
+      },
+    };
   }
 }

@@ -1,0 +1,83 @@
+<main class="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#faf9f7]">
+  <style>
+    @keyframes intro {
+      0% {
+        opacity: 0;
+        transform: scale(0.7);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fill {
+      0% {
+        height: 0%;
+      }
+
+      100% {
+        height: 100%;
+      }
+    }
+
+    @keyframes textFade {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes reveal {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .intro-animation {
+      animation: intro 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .fill-animation {
+      animation: fill 2.4s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
+    }
+
+    .text-animation {
+      animation: textFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+    }
+
+    .reveal-animation {
+      animation: reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 2.9s forwards;
+    }
+  </style>
+
+  <div class="relative flex flex-col items-center justify-center intro-animation">
+    <div
+      class="relative overflow-hidden text-[clamp(5rem,18vw,13rem)] font-semibold leading-none tracking-[-0.08em] text-[#171717]">
+      AMBROZZA
+
+      <div class="absolute inset-x-0 bottom-0 h-0 overflow-hidden fill-animation">
+        <div
+          class="absolute bottom-0 left-0 whitespace-nowrap text-[clamp(5rem,18vw,13rem)] font-semibold leading-none tracking-[-0.08em] text-black">
+          AMBROZZA
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-8 text-[15px] tracking-[0.01em] text-[#777] opacity-0 text-animation">
+      Estamos preparando tudo para você...
+    </p>
+  </div>
+
+  <div class="pointer-events-none absolute inset-0 bg-[#faf9f7] opacity-0 reveal-animation"></div>
+</main>

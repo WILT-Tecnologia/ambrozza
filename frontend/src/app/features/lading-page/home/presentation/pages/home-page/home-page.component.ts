@@ -1,5 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import Swal from 'sweetalert2';
 import { AvaliationsHomeComponent } from '../../components/avaliations/avaliations.component';
 import { CategoriasHomeComponent } from '../../components/categorias/categoriasHome.component';
 import { CtaBannerComponent } from '../../components/cta-banner/cta-banner.component';
@@ -23,4 +24,25 @@ import { MaisVendidosComponent } from '../../components/mais-vendidos/mais-vendi
   ],
   templateUrl: './home-page.component.html',
 })
-export class HomePageComponent {}
+export class HomePageComponent implements OnInit {
+  private readonly location = inject(Location);
+
+  ngOnInit(): void {
+    const state = this.location.getState() as {
+      storeCreated?: boolean;
+      shopkeeperName?: string;
+    };
+
+    if (state?.['storeCreated']) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: `Prezado ${state['shopkeeperName']}, sua loja foi criada com sucesso!`,
+        showConfirmButton: false,
+        timer: 4000,
+        timerProgressBar: true,
+      });
+    }
+  }
+}

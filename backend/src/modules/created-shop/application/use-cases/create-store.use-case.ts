@@ -46,22 +46,29 @@ export class CreateStoreUseCase {
           );
         }
 
-        const existingStore =
-          await storeRepository.findByShopkeeperId(shopkeeperId);
+        const normalizedName = input.name.trim();
+        const nameOnlyNumbersRegex = /^\d+$/;
 
-        if (existingStore) {
+        if (nameOnlyNumbersRegex.test(normalizedName)) {
           throw new ConflictException(
-            'Este lojista já possui uma loja cadastrada.',
+            'O nome da loja não pode conter apenas números.',
           );
         }
 
         const normalizedSlug = input.slug.trim().toLowerCase();
+        const existingName = await storeRepository.findByName(normalizedName);
+
+        if (existingName) {
+          throw new ConflictException(
+            'Este nome de loja já está sendo utilizado.',
+          );
+        }
 
         const slugRegex = /^[a-z]+(?:-[a-z]+)*$/;
 
         if (!slugRegex.test(normalizedSlug)) {
           throw new ConflictException(
-            'O slug deve conter apenas letras minúsculas e hífens, sem números ou caracteres especiais.',
+            'O slug deve conter apenas letras minúsculas e hífens para substituir espaços, sem números ou caracteres especiais.',
           );
         }
 
@@ -69,7 +76,7 @@ export class CreateStoreUseCase {
 
         if (existingSlug) {
           throw new ConflictException(
-            'Este slug já está sendo utilizado por outra loja.',
+            'Este Link exclusivo já está sendo utilizado por outra loja.',
           );
         }
 
@@ -91,7 +98,7 @@ export class CreateStoreUseCase {
         });
 
         const store = new Store({
-          name: input.name,
+          name: normalizedName,
           slug: normalizedSlug,
           description: input.description,
           cep: input.cep,
@@ -114,7 +121,7 @@ export class CreateStoreUseCase {
         }
 
         await storeOnboardingConsentRepository.create({
-          shopkeeperId,
+          storeId: createdStore.id,
           termsAccepted: input.acceptTerms,
           privacyAccepted: input.acceptPrivacy,
         });

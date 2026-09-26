@@ -35,9 +35,19 @@ export class PrismaStoreRepository implements IStoreRepository {
     return this.mapToDomain(record);
   }
 
-  async findByShopkeeperId(shopkeeperId: string): Promise<Store | null> {
-    const record = await this.prisma.store.findUnique({
+  async findByShopkeeperId(shopkeeperId: string): Promise<Store[]> {
+    const records = await this.prisma.store.findMany({
       where: { shopkeeperId },
+    });
+
+    return records.map((record) => this.mapToDomain(record));
+  }
+
+  async findByName(name: string): Promise<Store | null> {
+    const record = await this.prisma.store.findFirst({
+      where: {
+        name: name.trim(),
+      },
     });
 
     if (!record) {

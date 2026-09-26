@@ -27,7 +27,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Ops, estamos fora do ar. Volte mais tarde.',
+      message: 'Ops, estamos com alguns problemas. Volte mais tarde.',
     });
   }
 }

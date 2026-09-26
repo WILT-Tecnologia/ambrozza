@@ -11,13 +11,13 @@ export class PrismaStoreOnboardingConsentRepository implements IStoreOnboardingC
   ) {}
 
   async create(data: {
-    shopkeeperId: string;
+    storeId: string;
     termsAccepted: boolean;
     privacyAccepted: boolean;
   }): Promise<void> {
     await this.prisma.storeOnboardingConsent.create({
       data: {
-        shopkeeperId: data.shopkeeperId,
+        storeId: data.storeId,
         termsAccepted: data.termsAccepted,
         privacyAccepted: data.privacyAccepted,
       },

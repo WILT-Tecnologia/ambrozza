@@ -1,6 +1,6 @@
 export interface IStoreOnboardingConsentRepository {
   create(data: {
-    shopkeeperId: string;
+    storeId: string;
     termsAccepted: boolean;
     privacyAccepted: boolean;
   }): Promise<void>;

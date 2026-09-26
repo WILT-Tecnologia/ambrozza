@@ -2,18 +2,22 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 import { StoreService } from '../../core/services/create-store.service';
 import { OnboardingAuthService } from '../../core/services/onboarding-auth.service';
 import { cpfCnpjValidator } from '../../shared/utils/validators-cpf-cnpj';
 import { phoneValidator } from '../../shared/utils/validators-phone';
 import { LoginShopkeeperOutputDto } from './authentication/dtos/login-shopkeeper.dto';
-import { OnboardingStepsComponent } from './components/onboarding-steps.component';
-import { Step1StoreComponent } from './components/step-1-store/store-onboarding';
-import { Step2OwnerComponent } from './components/step-2-owner/owner-onboarding';
-import { Step3AddressComponent } from './components/step-3-address/address-onboarding';
-import { Step4OperationComponent } from './components/step-4-operation/operation-onboarding';
-import { Step5PaletteComponent } from './components/step-5-palette/palette-onboarding';
-import { Step6ReviewComponent } from './components/step-6-review/review-onboarding';
+import { OnboardingStepsComponent } from './components/steps/onboarding-steps.component';
+
+import { Step1StoreComponent } from './components/steps/pages/step-1-store/store-onboarding';
+import { Step2OwnerComponent } from './components/steps/pages/step-2-owner/owner-onboarding';
+import { Step3AddressComponent } from './components/steps/pages/step-3-address/address-onboarding';
+import { Step4OperationComponent } from './components/steps/pages/step-4-operation/operation-onboarding';
+import { Step5PaletteComponent } from './components/steps/pages/step-5-palette/palette-onboarding';
+import { Step6ReviewComponent } from './components/steps/pages/step-6-review/review-onboarding';
+import { StoreCreatedAnimationPageComponent } from './components/store-creation-animation/pages/store-created-animation-page.component';
 
 @Component({
   selector: 'app-onboarding',
@@ -28,112 +32,121 @@ import { Step6ReviewComponent } from './components/step-6-review/review-onboardi
     Step4OperationComponent,
     Step6ReviewComponent,
     Step5PaletteComponent,
+    StoreCreatedAnimationPageComponent,
   ],
   template: `
-    <div
-      class="min-h-screen bg-linear-to-br from-stone-100 via-amber-50/40 to-stone-200/60 flex flex-col font-sans text-stone-900 selection:bg-amber-200 selection:text-amber-900"
-    >
-      <header
-        class="w-full bg-white/80 backdrop-blur-md border-b border-stone-200/80 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs"
+    @if (showStoreCreatedAnimation()) {
+      <app-store-created-animation-page [shopkeeperName]="currentShopkeeper.name" />
+    } @else {
+      <div
+        class="min-h-screen bg-linear-to-br from-stone-100 via-amber-50/40 to-stone-200/60 flex flex-col font-sans text-stone-900 selection:bg-amber-200 selection:text-amber-900"
       >
-        <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-2xl bg-amber-900/10 border border-amber-900/20 flex items-center justify-center text-amber-900 shadow-xs"
-          >
-            <mat-icon class="text-amber-900 flex! items-center justify-center">store</mat-icon>
-          </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-lg tracking-tight text-stone-900 leading-none"
-              >Ambrozza</span
-            >
-            <span class="text-[10px] font-semibold text-amber-900/80 tracking-wider uppercase mt-1"
-              >Sua Loja Virtual de Doces</span
-            >
-          </div>
-        </div>
-      </header>
-
-      <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-10 flex flex-col gap-8">
-        <app-onboarding-steps [currentStep]="currentStep()" />
-
-        <div
-          class="bg-white/90 backdrop-blur-sm border border-stone-200/80 rounded-3xl p-6 sm:p-10 shadow-xl shadow-stone-900/5"
+        <header
+          class="w-full bg-white/80 backdrop-blur-md border-b border-stone-200/80 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-xs"
         >
-          <form [formGroup]="onboardingForm" (ngSubmit)="submit()">
-            @switch (currentStep()) {
-              @case (1) {
-                <app-step-1-store [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
-              }
-              @case (2) {
-                <app-step-2-owner
-                  [currentMaxStep]="currentMaxStep"
-                  [form]="onboardingForm"
-                  [currentShopkeeper]="currentShopkeeper"
-                />
-              }
-              @case (3) {
-                <app-step-3-address [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
-              }
-              @case (4) {
-                <app-step-4-operation [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
-              }
-              @case (5) {
-                <app-step-5-palette [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
-              }
-              @case (6) {
-                <app-step-6-review
-                  [currentMaxStep]="currentMaxStep"
-                  [form]="onboardingForm"
-                  (goToStep)="goToStep($event)"
-                />
-              }
-            }
-
-            <div class="flex items-center justify-between mt-10 pt-6 border-t border-stone-200/60">
-              @if (currentStep() > 1) {
-                <button
-                  type="button"
-                  (click)="prevStep()"
-                  class="px-5 py-3 rounded-2xl border border-stone-300/80 text-stone-700 text-sm font-semibold hover:bg-stone-100 hover:text-stone-900 transition-all cursor-pointer"
-                >
-                  ← Voltar
-                </button>
-              } @else {
-                <div></div>
-              }
-
-              @if (currentStep() < this.currentMaxStep) {
-                <button
-                  type="button"
-                  (click)="nextStep()"
-                  class="px-7 py-3 rounded-2xl bg-amber-900 text-white text-sm font-semibold hover:bg-amber-950 transition-all cursor-pointer shadow-md shadow-amber-950/20 active:scale-[0.98]"
-                >
-                  Continuar →
-                </button>
-              } @else {
-                <button
-                  type="submit"
-                  [disabled]="!onboardingForm.valid"
-                  class="px-7 py-3 rounded-2xl bg-amber-900 text-white text-sm font-semibold hover:bg-amber-950 transition-all cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed shadow-md shadow-amber-950/20 active:scale-[0.98] flex items-center gap-2"
-                >
-                  <mat-icon class="text-white flex! items-center justify-center text-sm w-5 h-5"
-                    >check_circle</mat-icon
-                  >
-                  Cadastrar minha Confeitaria
-                </button>
-              }
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-2xl bg-amber-900/10 border border-amber-900/20 flex items-center justify-center text-amber-900 shadow-xs"
+            >
+              <mat-icon class="text-amber-900 flex! items-center justify-center">store</mat-icon>
             </div>
-          </form>
-        </div>
-      </main>
-    </div>
+            <div class="flex flex-col">
+              <span class="font-bold text-lg tracking-tight text-stone-900 leading-none"
+                >Ambrozza</span
+              >
+              <span
+                class="text-[10px] font-semibold text-amber-900/80 tracking-wider uppercase mt-1"
+                >Sua Loja Virtual de Doces</span
+              >
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-10 flex flex-col gap-8">
+          <app-onboarding-steps [currentStep]="currentStep()" />
+
+          <div
+            class="bg-white/90 backdrop-blur-sm border border-stone-200/80 rounded-3xl p-6 sm:p-10 shadow-xl shadow-stone-900/5"
+          >
+            <form [formGroup]="onboardingForm" (ngSubmit)="submit()">
+              @switch (currentStep()) {
+                @case (1) {
+                  <app-step-1-store [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
+                }
+                @case (2) {
+                  <app-step-2-owner
+                    [currentMaxStep]="currentMaxStep"
+                    [form]="onboardingForm"
+                    [currentShopkeeper]="currentShopkeeper"
+                  />
+                }
+                @case (3) {
+                  <app-step-3-address [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
+                }
+                @case (4) {
+                  <app-step-4-operation [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
+                }
+                @case (5) {
+                  <app-step-5-palette [currentMaxStep]="currentMaxStep" [form]="onboardingForm" />
+                }
+                @case (6) {
+                  <app-step-6-review
+                    [currentMaxStep]="currentMaxStep"
+                    [form]="onboardingForm"
+                    (goToStep)="goToStep($event)"
+                  />
+                }
+              }
+
+              <div
+                class="flex items-center justify-between mt-10 pt-6 border-t border-stone-200/60"
+              >
+                @if (currentStep() > 1) {
+                  <button
+                    type="button"
+                    (click)="prevStep()"
+                    class="px-5 py-3 rounded-2xl border border-stone-300/80 text-stone-700 text-sm font-semibold hover:bg-stone-100 hover:text-stone-900 transition-all cursor-pointer"
+                  >
+                    ← Voltar
+                  </button>
+                } @else {
+                  <div></div>
+                }
+
+                @if (currentStep() < this.currentMaxStep) {
+                  <button
+                    type="button"
+                    (click)="nextStep()"
+                    class="px-7 py-3 rounded-2xl bg-amber-900 text-white text-sm font-semibold hover:bg-amber-950 transition-all cursor-pointer shadow-md shadow-amber-950/20 active:scale-[0.98]"
+                  >
+                    Continuar →
+                  </button>
+                } @else {
+                  <button
+                    type="submit"
+                    [disabled]="!onboardingForm.valid"
+                    class="px-7 py-3 rounded-2xl bg-amber-900 text-white text-sm font-semibold hover:bg-amber-950 transition-all cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed shadow-md shadow-amber-950/20 active:scale-[0.98] flex items-center gap-2"
+                  >
+                    <mat-icon class="text-white flex! items-center justify-center text-sm w-5 h-5"
+                      >check_circle</mat-icon
+                    >
+                    Cadastrar minha Confeitaria
+                  </button>
+                }
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+    }
   `,
 })
 export class OnboardingComponent {
   private authService = inject(OnboardingAuthService);
   private fb = inject(FormBuilder);
   private storeService = inject(StoreService);
-
+  showStoreCreatedAnimation = signal(false);
+  private router = inject(Router);
   currentShopkeeper: LoginShopkeeperOutputDto['shopkeeper'];
   currentMaxStep = 6;
   currentStep = signal(1);
@@ -158,7 +171,7 @@ export class OnboardingComponent {
       state: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
       city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(60)]],
       street: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
-      number: ['', [Validators.required, Validators.maxLength(10)]],
+      number: ['', [Validators.required, Validators.maxLength(10), Validators.pattern(/^\d+$/)]],
       neighborhood: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       complement: ['', [Validators.maxLength(60)]],
 
@@ -266,10 +279,29 @@ export class OnboardingComponent {
 
     this.storeService.createStore(data).subscribe({
       next: (response) => {
-        console.log('Loja criada com sucesso:', response);
+        this.showStoreCreatedAnimation.set(true);
+
+        setTimeout(() => {
+          this.router.navigate(['/'], {
+            state: {
+              storeCreated: true,
+              shopkeeperName: this.currentShopkeeper.name,
+            },
+          });
+        }, 3500);
       },
       error: (error) => {
-        console.error('Erro ao criar loja:', error);
+        const message = error.error?.message;
+        console.error('Erro ao criar loja:', message);
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: message || 'Não foi possível criar a loja.',
+          showConfirmButton: false,
+          timer: 4000,
+          timerProgressBar: true,
+        });
       },
     });
   }

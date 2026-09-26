@@ -20,6 +20,7 @@ import {
 } from '../../features/onboarding/authentication/dtos/register-shopkeeper.dto';
 export interface RefreshShopkeeperResponse {
   accessToken: string;
+  shopkeeper: LoginShopkeeperOutputDto['shopkeeper'];
 }
 @Injectable({
   providedIn: 'root',
@@ -67,6 +68,7 @@ export class OnboardingAuthService {
     this.refreshPromise = firstValueFrom(this.refresh())
       .then((response) => {
         this.setAccessToken(response.accessToken);
+        this.currentShopkeeper = response.shopkeeper;
         return true;
       })
       .catch(() => false)

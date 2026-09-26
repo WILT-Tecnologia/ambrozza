@@ -1,9 +1,9 @@
 import { Component, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormErrorComponent } from '../../../../shared/components/form-error.component.ts/form-error.component';
-import { formatCpfCnpj, formatPhone } from '../../../../shared/utils/document-mask';
-import { LoginShopkeeperOutputDto } from '../../authentication/dtos/login-shopkeeper.dto';
-import { getInputClasses } from '../../styles/form-styles';
+import { FormErrorComponent } from '../../../../../../shared/components/form-error.component.ts/form-error.component';
+import { formatCpfCnpj, formatPhone } from '../../../../../../shared/utils/document-mask';
+import { LoginShopkeeperOutputDto } from '../../../../authentication/dtos/login-shopkeeper.dto';
+import { getInputClasses } from '../../../../styles/form-styles';
 
 @Component({
   selector: 'app-step-2-owner',

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormErrorComponent } from '../../../../shared/components/form-error.component.ts/form-error.component';
-import { getInputClasses } from '../../styles/form-styles';
+import { FormErrorComponent } from '../../../../../../shared/components/form-error.component.ts/form-error.component';
+import { getInputClasses } from '../../../../styles/form-styles';
 
 @Component({
   selector: 'app-step-3-address',
@@ -97,6 +97,7 @@ import { getInputClasses } from '../../styles/form-styles';
             <input
               type="text"
               formControlName="number"
+              inputmode="numeric"
               placeholder="Ex.: 450"
               [class]="getInputClass('number')"
             />
