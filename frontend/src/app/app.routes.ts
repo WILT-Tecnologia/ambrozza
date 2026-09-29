@@ -4,7 +4,6 @@ import { guestAdminGuard } from './core/guards/guestAdmin.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
 import { shopkeeperGuestGuard } from './core/guards/shopkeeper-auth.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
-
 export const routes: Routes = [
   {
     path: '',
@@ -69,6 +68,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/adminRouter/pages/approval/approval-requests.component').then(
         (m) => m.ApprovalRequestsComponent,
+      ),
+  },
+  {
+    path: 'testerota',
+    loadComponent: () =>
+      import('./features/onboarding/components/store-creation-animation/pages/store-created-animation-page.component').then(
+        (m) => m.StoreCreatedAnimationPageComponent,
       ),
   },
   {
