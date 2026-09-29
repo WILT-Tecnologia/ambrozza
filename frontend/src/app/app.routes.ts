@@ -70,13 +70,7 @@ export const routes: Routes = [
         (m) => m.ApprovalRequestsComponent,
       ),
   },
-  {
-    path: 'testerota',
-    loadComponent: () =>
-      import('./features/onboarding/components/store-creation-animation/pages/store-created-animation-page.component').then(
-        (m) => m.StoreCreatedAnimationPageComponent,
-      ),
-  },
+
   {
     path: '**',
     redirectTo: '',
