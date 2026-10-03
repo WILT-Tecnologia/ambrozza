@@ -1,4 +1,4 @@
-import { Store } from '../entities/store.entity';
+import { Store } from '../entities/created-store.entity';
 
 export interface IStoreRepository {
   findById(id: string): Promise<Store | null>;

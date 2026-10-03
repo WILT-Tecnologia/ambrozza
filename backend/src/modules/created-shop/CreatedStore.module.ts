@@ -28,4 +28,4 @@ import { PrismaStoreRepository } from './infrastructure/repositories/prisma-stor
     },
   ],
 })
-export class StoreModule {}
+export class CreatedStoreModule {}

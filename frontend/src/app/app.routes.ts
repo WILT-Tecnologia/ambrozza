@@ -4,9 +4,10 @@ import { guestAdminGuard } from './core/guards/guestAdmin.guard';
 import { onboardingGuard } from './core/guards/onboarding.guard';
 import { shopkeeperGuestGuard } from './core/guards/shopkeeper-auth.guard';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
+
 export const routes: Routes = [
   {
-    path: '',
+    path: 'loja/:slug',
     component: PublicLayoutComponent,
     children: [
       {
@@ -39,7 +40,6 @@ export const routes: Routes = [
       },
     ],
   },
-
   {
     path: 'register-shopkeeper/auth',
     canActivate: [shopkeeperGuestGuard],
@@ -70,9 +70,15 @@ export const routes: Routes = [
         (m) => m.ApprovalRequestsComponent,
       ),
   },
-
+  {
+    path: '404',
+    loadComponent: () =>
+      import('./features/errors/not-found/not-found-page.component').then(
+        (m) => m.NotFoundPageComponent,
+      ),
+  },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: '/404',
   },
 ];

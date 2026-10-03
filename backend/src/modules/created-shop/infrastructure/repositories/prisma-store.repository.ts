@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { Prisma, Store as PrismaStoreModel } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Store } from '../../domain/entities/store.entity';
+import { Store } from '../../domain/entities/created-store.entity';
 import { IStoreRepository } from '../../domain/repositories/store.repository.interface';
 
 @Injectable()

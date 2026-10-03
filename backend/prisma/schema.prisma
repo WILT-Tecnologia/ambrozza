@@ -118,7 +118,6 @@ model StoreMembership {
   id        String          @id @default(uuid())
   userId    String
   storeId   String
-  role      StoreMemberRole @default(CUSTOMER)
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
@@ -170,12 +169,7 @@ enum SuperAdminRole {
   SUPER_ADMIN
 }
 
-enum StoreMemberRole {
-  CUSTOMER
-  STAFF
-  MANAGER
-  OWNER
-}
+
 
 enum OrderStatus {
   PENDING

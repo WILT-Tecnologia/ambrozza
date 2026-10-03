@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Store } from '../../domain/entities/store.entity';
+import { Store } from '../../domain/entities/created-store.entity';
 
 import {
   IUnitOfWork,
