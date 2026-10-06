@@ -58,33 +58,62 @@
 
       <div class="lg:col-span-6 relative flex justify-center pb-12 sm:pb-8 lg:pb-0 w-full">
 
+        @if (produtoDestaque) {
         <div
           class="relative w-full sm:w-[90%] lg:max-w-2xl rounded-3xl overflow-visible shadow-2xl bg-(--bg-surface) mx-auto">
-
           <div class="w-full h-90 sm:h-100 lg:h-105 rounded-3xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
-              alt="Bolo Rosé Framboesa" class="w-full h-full object-cover" />
+            <img [src]="produtoDestaque.imagem" [alt]="produtoDestaque.nome" class="w-full h-full object-cover" />
           </div>
 
           <div
             class="absolute -bottom-6 left-4 right-4 sm:left-6 sm:right-auto bg-(--bg-card) px-4 py-3.5 rounded-2xl shadow-xl border border-(--text-main)/5 sm:w-62.5 z-10">
-            <span class="text-[10px] text-(--text-muted) font-normal block mb-0.5">Mais pedido da semana</span>
+            <span class="text-[10px] text-(--text-muted) font-normal block mb-0.5">
+              {{ produtoDestaque.destaqueLabel }}
+            </span>
 
-            <h3 class="font-serif font-bold text-(--text-main) text-sm mb-2">Bolo Rosé Framboesa</h3>
+            <h3 class="font-serif font-bold text-(--text-main) text-sm mb-2">
+              {{ produtoDestaque.nome }}
+            </h3>
 
             <div class="flex items-center justify-between">
-              <span class="font-bold text-(--primary) text-sm">R$ 189,90</span>
+              <span class="font-bold text-(--primary) text-sm">
+                R$ {{ produtoDestaque.preco.toFixed(2).replace('.', ',') }}
+              </span>
 
               <div class="flex items-center gap-1 text-[11px] text-(--text-muted)">
                 <div class="flex text-(--star-color) gap-0.5 text-xs">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  @for (estrela of [1, 2, 3, 4, 5]; track estrela) {
+                  <span>
+                    {{ estrela <= produtoDestaque.nota ? '★' : '☆' }} </span>
+                      }
                 </div>
-                <span class="font-medium text-(--text-main) ml-0.5">4.9</span>
+
+                <span class="font-medium text-(--text-main) ml-0.5">
+                  {{ produtoDestaque.nota }}
+                </span>
               </div>
             </div>
           </div>
-
         </div>
+        } @else {
+        <div
+          class="relative w-full sm:w-[90%] lg:max-w-2xl min-h-90 sm:min-h-100 lg:min-h-105 rounded-3xl border border-dashed border-(--border-color) flex flex-col items-center justify-center text-center px-8 bg-(--bg-surface)">
+          <div
+            class="w-16 h-16 rounded-full bg-(--bg-card) border border-(--border-color) flex items-center justify-center mb-5">
+            <mat-icon class="text-(--text-muted)!">
+              cake
+            </mat-icon>
+          </div>
+
+          <h3 class="font-serif text-xl sm:text-2xl font-bold text-(--text-main) mb-2">
+            Novidades em breve
+          </h3>
+
+          <p class="max-w-sm text-sm text-(--text-muted) leading-relaxed">
+            Em breve, um dos produtos desta loja estará em destaque aqui.
+          </p>
+        </div>
+        }
 
       </div>
 

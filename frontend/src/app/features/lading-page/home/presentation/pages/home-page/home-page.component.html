@@ -1,9 +1,27 @@
-<main class="w-full  m-0 p-0">
+<main class="w-full m-0 p-0">
   <app-hero></app-hero>
+
   <app-infoCards></app-infoCards>
-  <app-destaques></app-destaques>
-  <app-mais-vendidos></app-mais-vendidos>
+
+  @if (produtosDestaques.length >= 4) {
+  <app-destaques [items]="produtosDestaquesCards" />
+  }
+
+  @if (produtosMaisVendidos.length >= 6) {
+  <app-mais-vendidos [produtos]="produtosMaisVendidos" />
+  }
+
+  @if (!hasHomeProductSections) {
+  <section class="w-full bg-transparent pt-4 pb-16">
+    <div class="container-padrao">
+      <app-empty-products message="Sua loja ainda não possui produtos suficientes para mostrar." />
+    </div>
+  </section>
+  }
+
   <app-categorias-home></app-categorias-home>
+
   <app-avaliations-home></app-avaliations-home>
+
   <app-cta-banner></app-cta-banner>
 </main>
