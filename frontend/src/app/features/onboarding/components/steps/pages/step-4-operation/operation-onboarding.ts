@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { getLabelClasses } from '../../styles/form-styles';
+import { getLabelClasses } from '../../../../styles/form-styles';
 
 @Component({
   selector: 'app-step-4-operation',

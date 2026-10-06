@@ -22,15 +22,19 @@ model SuperAdmin {
 }
 
 model Shopkeeper {
-  id               String            @id @default(uuid())
-  name             String
-  email            String            @unique
-  password         String
-  approvalStatus   ApprovalStatus    @default(PENDING)
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  store            Store?
-  approvalRequests ApprovalRequest[]
+  id                 String                  @id @default(uuid())
+  name               String
+  email              String                  @unique
+  password           String
+  document           String?                 @unique
+  phone              String?
+  approvalStatus     ApprovalStatus          @default(PENDING)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  store              Store[]
+  approvalRequests   ApprovalRequest[]
+  passwordResetCodes PasswordResetCode[]
+
 
   @@map("shopkeepers")
 }
@@ -65,28 +69,55 @@ model ApprovalRequest {
   @@map("approval_requests")
 }
 
-// 3. LOJAS E MEMBROS
+
 
 model Store {
-  id           String            @id @default(uuid())
-  name         String
-  slug         String            @unique
-  shopkeeperId String            @unique
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  id            String   @id @default(uuid())
+  name          String   @unique
+  slug          String   @unique
+  description   String
 
-  shopkeeper  Shopkeeper        @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
-  memberships StoreMembership[]
-  orders      Order[]
+  cep           String
+  state         String
+  city          String
+  street        String
+  number        String
+  neighborhood  String
+  complement    String?
+
+  allowDelivery Boolean  @default(true)
+  allowPickup   Boolean  @default(false)
+
+  colorPalette  String
+
+  shopkeeperId  String   
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  shopkeeper    Shopkeeper         @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+  onboardingConsent StoreOnboardingConsent?
+  memberships   StoreMembership[]
+  orders        Order[]
 
   @@map("stores")
+}
+
+model StoreOnboardingConsent {
+  id              String   @id @default(uuid())
+  storeId         String   @unique
+  termsAccepted   Boolean
+  privacyAccepted Boolean
+  acceptedAt      DateTime @default(now())
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("store_onboarding_consents")
 }
 
 model StoreMembership {
   id        String          @id @default(uuid())
   userId    String
   storeId   String
-  role      StoreMemberRole @default(CUSTOMER)
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
@@ -114,6 +145,19 @@ model Order {
   @@map("orders")
 }
 
+model PasswordResetCode {
+  id           String    @id @default(uuid())
+  shopkeeperId String
+  codeHash     String
+  expiresAt    DateTime
+  usedAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  shopkeeper Shopkeeper @relation(fields: [shopkeeperId], references: [id], onDelete: Cascade)
+
+  @@index([shopkeeperId])
+  @@map("password_reset_codes")
+}
 
 enum ApprovalStatus {
   PENDING
@@ -125,12 +169,7 @@ enum SuperAdminRole {
   SUPER_ADMIN
 }
 
-enum StoreMemberRole {
-  CUSTOMER
-  STAFF
-  MANAGER
-  OWNER
-}
+
 
 enum OrderStatus {
   PENDING

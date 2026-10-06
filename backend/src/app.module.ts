@@ -7,7 +7,10 @@ import { AppService } from './app.service';
 import { AdminAuthModule } from './modules/admin-auth/admin-auth.module';
 import { ApprovalModule } from './modules/approval-superAdmin/approval.module';
 import { AuthModule } from './modules/auth-onboarding/auth.module';
+import { CreatedStoreModule } from './modules/created-shop/CreatedStore.module';
+import { StoreModule } from './modules/shop/shop.module';
 import { PrismaModule } from './prisma/prisma.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -21,6 +24,8 @@ import { PrismaModule } from './prisma/prisma.module';
     ApprovalModule,
     AdminAuthModule,
     AuthModule,
+    CreatedStoreModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [

@@ -9,20 +9,36 @@ export class JwtTokenAdapter implements ITokenService {
   generateAccessToken(payload: { sub: string; email: string }): string {
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: '15m', // 15 minutos conforme combinamos
+      expiresIn: '15m',
     });
   }
 
   generateRefreshToken(payload: { sub: string; email: string }): string {
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '7d', // 7 dias conforme combinamos
+      expiresIn: '7d',
     });
   }
 
   verifyRefreshToken(token: string): { sub: string; email: string } {
     return this.jwtService.verify(token, {
       secret: process.env.JWT_REFRESH_SECRET,
+    });
+  }
+
+  generatePasswordResetToken(payload: { sub: string; email: string }): string {
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_PASSWORD_RESET_SECRET,
+      expiresIn: '10m',
+    });
+  }
+
+  verifyPasswordResetToken(token: string): {
+    sub: string;
+    email: string;
+  } {
+    return this.jwtService.verify(token, {
+      secret: process.env.JWT_PASSWORD_RESET_SECRET,
     });
   }
 }

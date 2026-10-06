@@ -7,7 +7,7 @@ import { PublicLayoutComponent } from './layouts/public-layout/public-layout.com
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'loja/:slug',
     component: PublicLayoutComponent,
     children: [
       {
@@ -40,7 +40,6 @@ export const routes: Routes = [
       },
     ],
   },
-
   {
     path: 'register-shopkeeper/auth',
     canActivate: [shopkeeperGuestGuard],
@@ -72,7 +71,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: '404',
+    loadComponent: () =>
+      import('./features/errors/not-found/not-found-page.component').then(
+        (m) => m.NotFoundPageComponent,
+      ),
+  },
+  {
     path: '**',
-    redirectTo: '',
+    redirectTo: '/404',
   },
 ];

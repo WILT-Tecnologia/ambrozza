@@ -1,10 +1,29 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 
 export interface RegisterFormPayload {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
+}
+
+export function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password')?.value;
+  const confirmPassword = control.get('confirmPassword')?.value;
+
+  if (!password || !confirmPassword) {
+    return null;
+  }
+
+  return password === confirmPassword ? null : { passwordsMismatch: true };
 }
 
 @Component({
@@ -19,7 +38,6 @@ export interface RegisterFormPayload {
             class="p-4 mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 text-sm rounded-r shadow-md flex justify-between items-center"
           >
             <span>{{ successMessage }}</span>
-
             <button
               type="button"
               class="font-bold text-lg text-green-700 hover:text-green-900 ml-4 cursor-pointer"
@@ -77,6 +95,24 @@ export interface RegisterFormPayload {
         />
       </div>
 
+      <div class="space-y-1">
+        <label for="reg-confirm-password" class="block text-xs font-semibold text-[#8C7A78]"
+          >Confirmar senha</label
+        >
+        <input
+          id="reg-confirm-password"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="••••••••"
+          class="w-full py-2 bg-transparent border-b border-[#D4C9BD] text-[#4A2E2B] font-medium placeholder-[#8C7A78]/50 focus:outline-none focus:border-[#8C3A32] transition-colors"
+        />
+        @if (
+          registerForm.hasError('passwordsMismatch') && registerForm.get('confirmPassword')?.touched
+        ) {
+          <span class="block text-xs text-red-600 pt-1">As senhas não coincidem.</span>
+        }
+      </div>
+
       <div class="flex items-center gap-2 pt-2 text-sm text-[#8C7A78]">
         <input
           type="checkbox"
@@ -116,17 +152,21 @@ export class RegisterFormComponent {
 
   @Output() register = new EventEmitter<RegisterFormPayload>();
 
-  registerForm: FormGroup = this.fb.group({
-    fullName: ['', [Validators.required, Validators.minLength(3)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    agreeTerms: [false, Validators.requiredTrue],
-  });
+  registerForm: FormGroup = this.fb.group(
+    {
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+      agreeTerms: [false, Validators.requiredTrue],
+    },
+    { validators: passwordsMatchValidator },
+  );
 
   onSubmit(): void {
     if (this.registerForm.invalid) return;
 
-    const { fullName, email, password } = this.registerForm.value;
-    this.register.emit({ name: fullName, email, password });
+    const { fullName, email, password, confirmPassword } = this.registerForm.value;
+    this.register.emit({ name: fullName, email, password, confirmPassword });
   }
 }

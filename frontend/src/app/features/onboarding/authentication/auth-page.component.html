@@ -10,66 +10,119 @@
       <div class="space-y-2 text-center lg:text-left">
         <h2 class="text-3xl font-bold text-[#4A2E2B]">
           @switch (mode()) {
-          @case ('login') { Bem-vindo de volta! }
-          @case ('register') { Pronto para criar sua loja? }
-          @case ('forgot') { Recuperar Senha }
+          @case ('login') {
+          Bem-vindo de volta!
+          }
+          @case ('register') {
+          Pronto para criar sua loja?
+          }
+          @case ('forgot') {
+          Recuperar Senha
+          }
+          @case ('verify-code') {
+          Verifique seu código
+          }
+          @case ('reset') {
+          Redefinir Senha
+          }
           }
         </h2>
+
         <p class="text-sm text-[#8C7A78]">
           @switch (mode()) {
-          @case ('login') { Acesse sua conta para gerenciar seu estabelecimento. }
-          @case ('register') { Crie sua conta para iniciar o processo de aprovação da sua doceria. }
-          @case ('forgot') { Digite seu e-mail cadastrado para receber o link de redefinição. }
+          @case ('login') {
+          Acesse sua conta para gerenciar seu estabelecimento.
+          }
+          @case ('register') {
+          Crie sua conta para iniciar o processo de aprovação da sua doceria.
+          }
+          @case ('forgot') {
+          Digite seu e-mail cadastrado para receber o código de recuperação.
+          }
+          @case ('verify-code') {
+          Digite o código de 6 dígitos enviado para seu e-mail.
+          }
+          @case ('reset') {
+          Defina uma nova senha para sua conta.
+          }
           }
         </p>
       </div>
 
+
       <div class="relative min-h-90">
 
-
+        <!-- LOGIN -->
         <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
             'opacity-100 translate-x-0 relative z-10': mode() === 'login',
-            'opacity-0 -translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'login'
+            'opacity-0 -translate-x-4 absolute top-0 left-0 pointer-events-none z-0':
+              mode() !== 'login'
           }">
-
           <app-login-form [isSubmitting]="isSubmitting()" [errorMessage]="errorMessage()" (login)="onLogin($event)"
             (forgotPassword)="setMode('forgot')" />
         </div>
 
-
+        <!-- REGISTER -->
         <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
             'opacity-100 translate-x-0 relative z-10': mode() === 'register',
-            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'register'
+            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0':
+              mode() !== 'register'
           }">
           <app-register-form [isSubmitting]="isSubmitting()" [errorMessage]="errorMessage()"
             [successMessage]="successMessage()" (register)="onRegister($event)" />
         </div>
 
-
+        <!-- FORGOT PASSWORD -->
         <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
             'opacity-100 translate-x-0 relative z-10': mode() === 'forgot',
-            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0': mode() !== 'forgot'
+            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0':
+              mode() !== 'forgot'
           }">
-          <app-forgot-password-form (backToLogin)="setMode('login')" />
+          <app-forgot-password-form (backToLogin)="setMode('login')"
+            (forgotPasswordSuccess)="onForgotPassword($event)" />
+        </div>
+
+        <!-- VERIFY CODE -->
+        <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
+            'opacity-100 translate-x-0 relative z-10': mode() === 'verify-code',
+            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0':
+              mode() !== 'verify-code'
+          }">
+          <app-verify-reset-code-form [email]="userEmail" [startCooldown]="resendCooldownStart"
+            (backToLogin)="setMode('login')" (codeVerified)="onVerifyResetCode($event)" />
+        </div>
+
+
+        <div class="w-full transition-all duration-300 ease-in-out" [ngClass]="{
+            'opacity-100 translate-x-0 relative z-10': mode() === 'reset',
+            'opacity-0 translate-x-4 absolute top-0 left-0 pointer-events-none z-0':
+              mode() !== 'reset'
+          }">
+          <app-reset-password-form [resetToken]="resetToken" (backToLogin)="setMode('login')"
+            (resetSuccess)="onResetSuccess($event)" />
         </div>
 
       </div>
 
-      @if (mode() !== 'forgot') {
+      @if (mode() !== 'forgot' && mode() !== 'verify-code' && mode() !== 'reset') {
       <div class="text-center pt-2 text-sm text-[#8C7A78]">
+
         @if (mode() === 'login') {
         Ainda não tem uma conta?
+
         <button (click)="setMode('register')"
           class="text-[#8C3A32] font-semibold underline hover:opacity-80 cursor-pointer">
           Cadastre-se
         </button>
         } @else {
         Já possui uma conta?
+
         <button (click)="setMode('login')"
           class="text-[#8C3A32] font-semibold underline hover:opacity-80 cursor-pointer">
           Entrar
         </button>
         }
+
       </div>
       }
 

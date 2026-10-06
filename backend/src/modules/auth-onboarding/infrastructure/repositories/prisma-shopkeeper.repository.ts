@@ -20,15 +20,19 @@ export class PrismaShopkeeperRepository implements IShopkeeperRepository {
   ) {}
 
   async findByEmail(email: string): Promise<Shopkeeper | null> {
-    const record = await this.prisma.shopkeeper.findUnique({
-      where: { email },
-    });
+    try {
+      const record = await this.prisma.shopkeeper.findUnique({
+        where: { email },
+      });
 
-    if (!record) return null;
+      if (!record) return null;
 
-    return this.mapToDomain(record);
+      return this.mapToDomain(record);
+    } catch (error) {
+      console.error('ERRO REAL DO PRISMA:', error);
+      throw error;
+    }
   }
-
   async findById(id: string): Promise<Shopkeeper | null> {
     const record = await this.prisma.shopkeeper.findUnique({
       where: { id },
@@ -66,6 +70,25 @@ export class PrismaShopkeeperRepository implements IShopkeeperRepository {
     }
   }
 
+  async updateOnboardingData(
+    shopkeeperId: string,
+    data: {
+      name: string;
+      document: string;
+      phone: string;
+    },
+  ): Promise<void> {
+    await this.prisma.shopkeeper.update({
+      where: {
+        id: shopkeeperId,
+      },
+      data: {
+        document: data.document.trim(),
+        phone: data.phone.trim(),
+      },
+    });
+  }
+
   async updateApprovalStatus(
     shopkeeperId: string,
     status: string,
@@ -78,8 +101,22 @@ export class PrismaShopkeeperRepository implements IShopkeeperRepository {
     });
   }
 
+  async updatePassword(
+    shopkeeperId: string,
+    passwordHash: string,
+  ): Promise<void> {
+    await this.prisma.shopkeeper.update({
+      where: {
+        id: shopkeeperId,
+      },
+      data: {
+        password: passwordHash,
+      },
+    });
+  }
+
   async hasStore(shopkeeperId: string): Promise<boolean> {
-    const store = await this.prisma.store.findUnique({
+    const store = await this.prisma.store.findFirst({
       where: { shopkeeperId },
     });
 

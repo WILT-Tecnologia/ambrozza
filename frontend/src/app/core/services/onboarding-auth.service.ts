@@ -3,16 +3,24 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, firstValueFrom, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  ForgotPasswordRequestDto,
+  ForgotPasswordResponseDto,
+  ResetPasswordRequestDto,
+  ResetPasswordResponseDto,
+  VerifyResetCodeRequestDto,
+  VerifyResetCodeResponseDto,
+} from '../../features/onboarding/authentication/dtos/forgot-password.dto';
+import {
   LoginShopkeeperInputDto,
   LoginShopkeeperOutputDto,
 } from '../../features/onboarding/authentication/dtos/login-shopkeeper.dto';
 import {
-  RegisterShopkeeperInputDto,
   RegisterShopkeeperOutputDto,
+  RegisterShopkeeperRequestDto,
 } from '../../features/onboarding/authentication/dtos/register-shopkeeper.dto';
-
 export interface RefreshShopkeeperResponse {
   accessToken: string;
+  shopkeeper: LoginShopkeeperOutputDto['shopkeeper'];
 }
 @Injectable({
   providedIn: 'root',
@@ -24,10 +32,9 @@ export class OnboardingAuthService {
   private accessToken: string | null = null;
   private currentShopkeeper: LoginShopkeeperOutputDto['shopkeeper'] | null = null;
 
-  register(dto: RegisterShopkeeperInputDto): Observable<RegisterShopkeeperOutputDto> {
+  register(dto: RegisterShopkeeperRequestDto): Observable<RegisterShopkeeperOutputDto> {
     return this.http.post<RegisterShopkeeperOutputDto>(`${this.apiUrl}/register`, dto);
   }
-
   login(dto: LoginShopkeeperInputDto): Observable<LoginShopkeeperOutputDto> {
     return this.http
       .post<LoginShopkeeperOutputDto>(`${this.apiUrl}/login`, dto, {
@@ -61,6 +68,7 @@ export class OnboardingAuthService {
     this.refreshPromise = firstValueFrom(this.refresh())
       .then((response) => {
         this.setAccessToken(response.accessToken);
+        this.currentShopkeeper = response.shopkeeper;
         return true;
       })
       .catch(() => false)
@@ -75,6 +83,22 @@ export class OnboardingAuthService {
     return this.http
       .post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true })
       .pipe(tap(() => this.logoutLocal()));
+  }
+
+  resendResetCode(dto: ForgotPasswordRequestDto): Observable<ForgotPasswordResponseDto> {
+    return this.http.post<ForgotPasswordResponseDto>(`${this.apiUrl}/resend-reset-code`, dto);
+  }
+
+  forgotPassword(dto: ForgotPasswordRequestDto): Observable<ForgotPasswordResponseDto> {
+    return this.http.post<ForgotPasswordResponseDto>(`${this.apiUrl}/forgot-password`, dto);
+  }
+
+  verifyResetCode(dto: VerifyResetCodeRequestDto): Observable<VerifyResetCodeResponseDto> {
+    return this.http.post<VerifyResetCodeResponseDto>(`${this.apiUrl}/verify-reset-code`, dto);
+  }
+
+  resetPassword(dto: ResetPasswordRequestDto): Observable<ResetPasswordResponseDto> {
+    return this.http.post<ResetPasswordResponseDto>(`${this.apiUrl}/reset-password`, dto);
   }
 
   setAccessToken(token: string): void {

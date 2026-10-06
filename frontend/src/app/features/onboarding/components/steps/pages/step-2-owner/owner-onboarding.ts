@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormErrorComponent } from '../../../../shared/components/form-error.component.ts/form-error.component';
-import { formatCpfCnpj, formatPhone } from '../../../../shared/utils/document-mask';
-import { getInputClasses } from '../../styles/form-styles';
+import { FormErrorComponent } from '../../../../../../shared/components/form-error.component.ts/form-error.component';
+import { formatCpfCnpj, formatPhone } from '../../../../../../shared/utils/document-mask';
+import { LoginShopkeeperOutputDto } from '../../../../authentication/dtos/login-shopkeeper.dto';
+import { getInputClasses } from '../../../../styles/form-styles';
 
 @Component({
   selector: 'app-step-2-owner',
@@ -34,17 +35,13 @@ import { getInputClasses } from '../../styles/form-styles';
 
           <input
             type="text"
-            formControlName="ownerName"
-            placeholder="Ex.: Maria Clara Azevedo"
-            [class]="getInputClass('ownerName')"
+            [value]="currentShopkeeper().name"
+            readonly
+            class="w-full px-4.5 py-3 rounded-2xl border border-stone-200 bg-stone-100 text-stone-500 text-sm cursor-not-allowed font-medium"
           />
-
-          <app-form-error [control]="form().get('ownerName')" />
         </div>
 
-        <!-- CPF/CNPJ + WHATSAPP -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- CPF / CNPJ -->
           <div>
             <label class="block text-xs font-bold text-stone-700 mb-2 uppercase tracking-wider">
               CPF ou CNPJ *
@@ -62,7 +59,6 @@ import { getInputClasses } from '../../styles/form-styles';
             <app-form-error [control]="form().get('document')" />
           </div>
 
-          <!-- WHATSAPP -->
           <div>
             <label class="block text-xs font-bold text-stone-700 mb-2 uppercase tracking-wider">
               WhatsApp para cadastro *
@@ -81,7 +77,6 @@ import { getInputClasses } from '../../styles/form-styles';
           </div>
         </div>
 
-        <!-- E-MAIL -->
         <div>
           <label class="block text-xs font-bold text-stone-700 mb-2 uppercase tracking-wider">
             E-mail de acesso *
@@ -89,7 +84,8 @@ import { getInputClasses } from '../../styles/form-styles';
 
           <input
             type="email"
-            formControlName="email"
+            [value]="currentShopkeeper().email"
+            readonly
             class="w-full px-4.5 py-3 rounded-2xl border border-stone-200 bg-stone-100 text-stone-500 text-sm cursor-not-allowed font-medium"
           />
 
@@ -104,6 +100,7 @@ import { getInputClasses } from '../../styles/form-styles';
 export class Step2OwnerComponent {
   currentMaxStep = input.required<number>();
   form = input.required<FormGroup>();
+  currentShopkeeper = input.required<LoginShopkeeperOutputDto['shopkeeper']>();
 
   isFieldInvalid(fieldName: string): boolean {
     const control = this.form().get(fieldName);
