@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
+
 import { HomeProduct } from '../../../../../../core/models/product/home-product.model';
 
 @Component({
-  selector: 'app-mais-vendidos',
+  selector: 'app-best-sellers',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './mais-vendidos.component.html',
-  styleUrls: ['./mais-vendidos.component.css'],
+  templateUrl: './best-sellers.component.html',
+  styleUrls: ['./best-sellers.component.css'],
 })
-export class MaisVendidosComponent {
-  @Input() produtos: HomeProduct[] = [];
+export class BestSellersComponent {
+  @Input() products: HomeProduct[] = [];
 }

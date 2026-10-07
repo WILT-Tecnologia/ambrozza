@@ -3,12 +3,12 @@
 
   <app-infoCards></app-infoCards>
 
-  @if (produtosDestaques.length >= 4) {
-  <app-destaques [items]="produtosDestaquesCards" />
+  @if (featuredProducts.length >= 4) {
+  <app-highlights [items]="featuredProductCards" />
   }
 
-  @if (produtosMaisVendidos.length >= 6) {
-  <app-mais-vendidos [produtos]="produtosMaisVendidos" />
+  @if (bestSellingProducts.length >= 6) {
+  <app-best-sellers [products]="bestSellingProducts" />
   }
 
   @if (!hasHomeProductSections) {
@@ -19,9 +19,9 @@
   </section>
   }
 
-  <app-categorias-home></app-categorias-home>
+  <app-categories-home></app-categories-home>
 
-  <app-avaliations-home></app-avaliations-home>
+  <app-evaluations-home></app-evaluations-home>
 
   <app-cta-banner></app-cta-banner>
 </main>

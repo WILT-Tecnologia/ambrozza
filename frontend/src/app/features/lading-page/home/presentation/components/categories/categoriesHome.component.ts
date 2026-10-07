@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
+
 import { MatIcon } from '@angular/material/icon';
+
 import { RouterModule } from '@angular/router';
-import { CategoriaHome } from '../../../../../../core/models/category/categoria-home.model';
+import { CategoryHome } from '../../../../../../core/models/category/category-home.model';
 
 @Component({
-  selector: 'app-categorias-home',
+  selector: 'app-categories-home',
   imports: [CommonModule, RouterModule, MatIcon],
-  templateUrl: './categoriasHome.component.html',
+  templateUrl: './categoriesHome.component.html',
 })
-export class CategoriasHomeComponent {
-  categorias: CategoriaHome[] = [];
+export class CategoriesHomeComponent {
+  categories: CategoryHome[] = [];
 }

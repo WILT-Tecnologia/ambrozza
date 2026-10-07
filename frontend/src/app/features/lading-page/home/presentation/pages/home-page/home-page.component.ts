@@ -1,21 +1,36 @@
 import { CommonModule, Location } from '@angular/common';
+
 import { Component, OnInit, inject } from '@angular/core';
+
 import { ActivatedRoute, Router } from '@angular/router';
+
 import Swal from 'sweetalert2';
+
 import { HomeProduct } from '../../../../../../core/models/product/home-product.model';
+
 import { ShopHomeResponse } from '../../../../../../core/models/shop/shop-home-response.model';
+
 import { ShopService } from '../../../../../../core/services/shop.service';
-import { AvaliationsHomeComponent } from '../../components/avaliations/avaliations.component';
-import { CategoriasHomeComponent } from '../../components/categorias/categoriasHome.component';
+
+import { EvaluationsHomeComponent } from '../../components/avaliations/evaluations.component';
+
+import { BestSellersComponent } from '../../components/best-sellers/best-sellers.component';
+
+import { CategoriesHomeComponent } from '../../components/categories/categoriesHome.component';
+
 import { CtaBannerComponent } from '../../components/cta-banner/cta-banner.component';
+
+import { EmptyProductsComponent } from '../../components/empty-products/empty-products.component';
+
+import { HeroComponent } from '../../components/hero/hero.component';
+
 import {
   CarouselCardItem,
-  DestaquesComponent,
-} from '../../components/destaques/destaques.component';
-import { EmptyProductsComponent } from '../../components/empty-products/empty-products.component';
-import { HeroComponent } from '../../components/hero/hero.component';
+  HighlightsComponent,
+} from '../../components/Highlights/Highlights.component';
+
 import { InfoCardsComponent } from '../../components/InfoCards/infocards.component';
-import { MaisVendidosComponent } from '../../components/mais-vendidos/mais-vendidos.component';
+
 @Component({
   selector: 'app-home-page',
   standalone: true,
@@ -23,10 +38,10 @@ import { MaisVendidosComponent } from '../../components/mais-vendidos/mais-vendi
     CommonModule,
     HeroComponent,
     InfoCardsComponent,
-    DestaquesComponent,
-    MaisVendidosComponent,
-    CategoriasHomeComponent,
-    AvaliationsHomeComponent,
+    HighlightsComponent,
+    BestSellersComponent,
+    CategoriesHomeComponent,
+    EvaluationsHomeComponent,
     CtaBannerComponent,
     EmptyProductsComponent,
   ],
@@ -39,45 +54,44 @@ export class HomePageComponent implements OnInit {
   private readonly router = inject(Router);
 
   shopHome?: ShopHomeResponse;
-  produtos: HomeProduct[] = [];
+  products: HomeProduct[] = [];
   loading = true;
   error = false;
-  produtosDestaques: HomeProduct[] = [];
+  featuredProducts: HomeProduct[] = [];
+  bestSellingProducts: HomeProduct[] = [];
 
-  produtosMaisVendidos: HomeProduct[] = [];
+  private readonly MIN_HIGHLIGHTS = 4;
+  private readonly MIN_BEST_SELLERS = 6;
 
-  private readonly MIN_DESTAQUES = 4;
-  private readonly MIN_MAIS_VENDIDOS = 6;
-
-  // get produtosDestaques(): HomeProduct[] {
-  //   return this.produtos.filter((produto) => produto.destaque).slice(0, this.MIN_DESTAQUES);
+  // get featuredProducts(): HomeProduct[] {
+  //   return this.products.filter((product) => product.highlighted).slice(0, this.MIN_HIGHLIGHTS);
   // }
 
-  // get produtosMaisVendidos(): HomeProduct[] {
-  //   return [...this.produtos]
-  //     .sort((a, b) => b.unidadesVendidas - a.unidadesVendidas)
-  //     .slice(0, this.MIN_MAIS_VENDIDOS);
+  // get bestSellingProducts(): HomeProduct[] {
+  //   return [...this.products]
+  //     .sort((a, b) => b.unitsSold - a.unitsSold)
+  //     .slice(0, this.MIN_BEST_SELLERS);
   // }
 
   get hasHomeProductSections(): boolean {
     return (
-      this.produtosDestaques.length >= this.MIN_DESTAQUES ||
-      this.produtosMaisVendidos.length >= this.MIN_MAIS_VENDIDOS
+      this.featuredProducts.length >= this.MIN_HIGHLIGHTS ||
+      this.bestSellingProducts.length >= this.MIN_BEST_SELLERS
     );
   }
 
-  get produtosDestaquesCards(): CarouselCardItem[] {
-    return this.produtosDestaques.map((produto) => ({
-      id: produto.id,
-      imageUrl: produto.imagem,
-      imageAlt: produto.nome,
-      categoryLabel: produto.categoria,
-      highlightLabel: produto.destaque ? 'Destaque' : undefined,
-      title: produto.nome,
-      description: produto.descricao,
-      rating: produto.nota,
-      reviewsCount: produto.reviews,
-      price: produto.preco,
+  get featuredProductCards(): CarouselCardItem[] {
+    return this.featuredProducts.map((product) => ({
+      id: product.id,
+      imageUrl: product.image,
+      imageAlt: product.name,
+      categoryLabel: product.category,
+      highlightLabel: product.highlighted ? 'Destaque' : undefined,
+      title: product.name,
+      description: product.description,
+      rating: product.rating,
+      reviewsCount: product.reviews,
+      price: product.price,
       ctaLabel: 'Pedir',
     }));
   }

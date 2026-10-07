@@ -1,12 +1,12 @@
 export interface HomeProduct {
   id: string;
-  nome: string;
-  descricao: string;
-  imagem: string;
-  categoria: string;
-  destaque: boolean;
-  nota: number;
+  name: string;
+  description: string;
+  image: string;
+  category: string;
+  highlighted: boolean;
+  rating: number;
   reviews: number;
-  unidadesVendidas: number;
-  preco: number;
+  unitsSold: number;
+  price: number;
 }

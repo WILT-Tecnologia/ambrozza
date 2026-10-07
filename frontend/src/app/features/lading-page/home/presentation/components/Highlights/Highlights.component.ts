@@ -1,4 +1,5 @@
 import { DecimalPipe } from '@angular/common';
+
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -14,6 +15,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+
 import { MatIconModule } from '@angular/material/icon';
 
 export interface CarouselCardItem {
@@ -32,26 +34,20 @@ export interface CarouselCardItem {
 }
 
 @Component({
-  selector: 'app-destaques',
+  selector: 'app-highlights',
   standalone: true,
   imports: [DecimalPipe, MatIconModule],
-  templateUrl: './destaques.component.html',
+  templateUrl: './Highlights.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DestaquesComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class HighlightsComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() items: CarouselCardItem[] = [];
-
   @Input() loading = false;
-
   @Input() errorMessage: string | null = null;
-
   @Input() eyebrow = 'Seleção da casa';
-
   @Input() sectionTitle = 'Produtos em destaque';
-
   @Output() itemSelected = new EventEmitter<CarouselCardItem>();
-
-  @Output() verTodosClicked = new EventEmitter<void>();
+  @Output() viewAllClicked = new EventEmitter<void>();
 
   @ViewChild('track')
   private trackRef?: ElementRef<HTMLDivElement>;
@@ -59,7 +55,6 @@ export class DestaquesComponent implements AfterViewInit, OnChanges, OnDestroy {
   private resizeObserver?: ResizeObserver;
 
   canScrollPrev = false;
-
   canScrollNext = false;
 
   readonly skeletonPlaceholders = Array.from({ length: 4 });
@@ -125,7 +120,6 @@ export class DestaquesComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     const gap = 24;
-
     const scrollAmount = card.offsetWidth + gap;
 
     track.scrollBy({
