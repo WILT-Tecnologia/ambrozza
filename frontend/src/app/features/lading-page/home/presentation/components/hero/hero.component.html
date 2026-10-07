@@ -1,93 +1,195 @@
 <section class="w-full bg-(image:--hero-gradient) pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+
   <div class="container-padrao">
+
     <div class="mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
       <div class="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left">
 
         <div
           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-(--bg-card)/70 border border-(--primary) mb-6 shadow-sm">
+
           <mat-icon style="color: var(--primary); font-size: 16px; width: 15px; height: 16px;"
             class="flex items-center justify-center leading-none">auto_awesome</mat-icon>
-          <span class="text-xs font-normal text-(--primary) tracking-wide leading-none">Confeitaria artesanal desde
-            2014</span>
+
+          <span class="text-xs font-normal text-(--primary) tracking-wide leading-none">
+            Confeitaria artesanal desde 2014
+          </span>
+
         </div>
 
         <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-(--text-main) leading-[1.15] mb-6">
+
           Bolos que <br class="hidden sm:inline">
+
           transformam <br>
-          <span class="text-(--primary) font-normal italic">datas em memórias</span>
+
+          <span class="text-(--primary) font-normal italic">
+            datas em memórias
+          </span>
+
         </h1>
 
         <p class="text-sm sm:text-base text-(--text-muted) max-w-lg mb-8 leading-relaxed">
+
           Massas artesanais, recheios autorais e decoração sob medida. Escolha do cardápio ou monte o seu bolo do zero —
           com entrega em 90 min ou retirada na loja.
+
         </p>
 
         <div
           class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4 w-full sm:w-auto mb-10 lg:mb-12">
+
           <a routerLink="/cardapio"
             class="flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-(--primary) text-(--text-on-primary) font-medium text-sm hover:bg-(--primary-hover) transition-all shadow-sm">
+
             Ver cardápio
+
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+
             </svg>
+
           </a>
+
           <a routerLink="/personalizar"
             class="flex items-center justify-center px-6 py-3.5 rounded-full bg-transparent border border-(--text-main)/20 text-(--text-main) font-medium text-sm hover:bg-(--bg-card)/40 transition-all">
+
             Personalizar meu bolo
+
           </a>
+
         </div>
 
         <div
           class="grid grid-cols-3 gap-4 sm:gap-6 pt-6 border-t border-(--border-color) w-full max-w-md text-center lg:text-left">
+
           <div>
-            <div class="font-serif text-xl sm:text-2xl font-bold text-(--text-main)">4.9</div>
-            <div class="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">Avaliação média</div>
+
+            <div class="font-serif text-xl sm:text-2xl font-bold text-(--text-main)">
+              4.9
+            </div>
+
+            <div class="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">
+              Avaliação média
+            </div>
+
           </div>
+
           <div>
-            <div class="font-serif text-xl sm:text-2xl font-bold text-(--text-main)">12 anos</div>
-            <div class="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">De confeitaria</div>
+
+            <div class="font-serif text-xl sm:text-2xl font-bold text-(--text-main)">
+              12 anos
+            </div>
+
+            <div class="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">
+              De confeitaria
+            </div>
+
           </div>
+
           <div>
-            <div class="font-serif text-xl sm:text-2xl font-bold text-(--text-main)">2.4k+</div>
-            <div class="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">Pedidos entregues</div>
+
+            <div class="font-serif text-xl sm:text-2xl font-bold text-(--text-main)">
+              2.4k+
+            </div>
+
+            <div class="text-[11px] sm:text-xs text-(--text-muted) mt-0.5">
+              Pedidos entregues
+            </div>
+
           </div>
+
         </div>
 
       </div>
 
       <div class="lg:col-span-6 relative flex justify-center pb-12 sm:pb-8 lg:pb-0 w-full">
 
+        @if (featuredProduct) {
+
         <div
           class="relative w-full sm:w-[90%] lg:max-w-2xl rounded-3xl overflow-visible shadow-2xl bg-(--bg-surface) mx-auto">
 
           <div class="w-full h-90 sm:h-100 lg:h-105 rounded-3xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop"
-              alt="Bolo Rosé Framboesa" class="w-full h-full object-cover" />
+
+            <img [src]="featuredProduct.image" [alt]="featuredProduct.name" class="w-full h-full object-cover" />
+
           </div>
 
           <div
             class="absolute -bottom-6 left-4 right-4 sm:left-6 sm:right-auto bg-(--bg-card) px-4 py-3.5 rounded-2xl shadow-xl border border-(--text-main)/5 sm:w-62.5 z-10">
-            <span class="text-[10px] text-(--text-muted) font-normal block mb-0.5">Mais pedido da semana</span>
 
-            <h3 class="font-serif font-bold text-(--text-main) text-sm mb-2">Bolo Rosé Framboesa</h3>
+            <span class="text-[10px] text-(--text-muted) font-normal block mb-0.5">
+              {{ featuredProduct.highlightLabel }}
+            </span>
+
+            <h3 class="font-serif font-bold text-(--text-main) text-sm mb-2">
+              {{ featuredProduct.name }}
+            </h3>
 
             <div class="flex items-center justify-between">
-              <span class="font-bold text-(--primary) text-sm">R$ 189,90</span>
+
+              <span class="font-bold text-(--primary) text-sm">
+                R$ {{ featuredProduct.price.toFixed(2).replace('.', ',') }}
+              </span>
 
               <div class="flex items-center gap-1 text-[11px] text-(--text-muted)">
+
                 <div class="flex text-(--star-color) gap-0.5 text-xs">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+
+                  <span>
+                    {{ star <= featuredProduct.rating ? '★' : '☆' }} </span>
+
+                      }
+
                 </div>
-                <span class="font-medium text-(--text-main) ml-0.5">4.9</span>
+
+                <span class="font-medium text-(--text-main) ml-0.5">
+                  {{ featuredProduct.rating }}
+                </span>
+
               </div>
+
             </div>
+
           </div>
 
         </div>
 
+        } @else {
+
+        <div
+          class="relative w-full sm:w-[90%] lg:max-w-2xl min-h-90 sm:min-h-100 lg:min-h-105 rounded-3xl border border-dashed border-(--border-color) flex flex-col items-center justify-center text-center px-8 bg-(--bg-surface)">
+
+          <div
+            class="w-16 h-16 rounded-full bg-(--bg-card) border border-(--border-color) flex items-center justify-center mb-5">
+
+            <mat-icon class="text-(--text-muted)!">
+              cake
+            </mat-icon>
+
+          </div>
+
+          <h3 class="font-serif text-xl sm:text-2xl font-bold text-(--text-main) mb-2">
+            Novidades em breve
+          </h3>
+
+          <p class="max-w-sm text-sm text-(--text-muted) leading-relaxed">
+            Em breve, um dos produtos desta loja estará em destaque aqui.
+          </p>
+
+        </div>
+
+        }
+
       </div>
 
     </div>
+
   </div>
+
 </section>
